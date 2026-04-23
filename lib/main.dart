@@ -7,7 +7,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/presentation/pages/main_screen.dart';
 import 'core/theme/app_theme.dart';
-import 'features/tasks/presentation/pages/task_list_page.dart';
+import 'features/auth/presentation/pages/login_page.dart';
+import 'features/auth/presentation/providers/auth_provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -36,17 +37,36 @@ void main() async {
   runApp(const ProviderScope(child: FocusBuddyApp()));
 }
 
-class FocusBuddyApp extends StatelessWidget {
+class FocusBuddyApp extends ConsumerWidget {
   const FocusBuddyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+
     return MaterialApp(
       title: 'nuradar',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      home: const MainScreen(),
+      home: authState.when(
+        data: (user) {
+          if (user != null) {
+            return const MainScreen();
+          }
+          return const LoginPage();
+        },
+        loading: () => const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        error: (err, stack) => Scaffold(
+          body: Center(
+            child: Text('Ошибка авторизации: $err'),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hive/hive.dart';
 
 import '../../domain/entities/task_entity.dart';
@@ -24,7 +27,7 @@ class TaskRepositoryImpl implements TaskRepository {
   static const String _kCollection = 'tasks';
 
   const TaskRepositoryImpl({FirebaseFirestore? firestore, required Box taskBox})
-    : _firestore = firestore,
+    : _firestore = firestore ?? FirebaseFirestore.instance,
       _taskBox = taskBox;
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -43,7 +46,7 @@ class TaskRepositoryImpl implements TaskRepository {
     final localTasks = _readFromBox();
 
     // 2️⃣ Kick off a background sync with Firestore (fire-and-forget).
-    // _syncFromFirestore();
+    _syncFromFirestore();
 
     return localTasks;
   }
@@ -64,7 +67,8 @@ class TaskRepositoryImpl implements TaskRepository {
     await _saveToBox(model);
 
     // 2️⃣ Best-effort remote write.
-    // await _setInFirestore(model);
+    print('--- addTask called: calling _setInFirestore ---');
+    await _setInFirestore(model);
   }
 
   /// Updates an existing task.
@@ -78,7 +82,7 @@ class TaskRepositoryImpl implements TaskRepository {
     await _saveToBox(model);
 
     // 2️⃣ Best-effort remote update.
-    // await _setInFirestore(model);
+    await _setInFirestore(model);
   }
 
   /// Deletes a task by [id].
@@ -90,9 +94,9 @@ class TaskRepositoryImpl implements TaskRepository {
     await _taskBox.delete(id);
 
     // 2️⃣ Best-effort remote deletion.
-    /*
+    if (_firestore == null) return;
     try {
-      await _firestore!.collection(_kCollection).doc(id).delete();
+      await _firestore.collection(_kCollection).doc(id).delete();
     } catch (e, st) {
       // Network unavailable or other transient error — will be cleaned up
       // during the next successful sync.
@@ -103,7 +107,6 @@ class TaskRepositoryImpl implements TaskRepository {
         name: 'TaskRepository',
       );
     }
-    */
   }
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -112,9 +115,11 @@ class TaskRepositoryImpl implements TaskRepository {
 
   /// Deserializes all entries stored in the Hive box into [TaskEntity] objects.
   List<TaskEntity> _readFromBox() {
+    final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
     return _taskBox.values
         .whereType<Map>()
         .map((raw) => TaskModel.fromJson(Map<String, dynamic>.from(raw)))
+        .where((model) => model.userId == currentUserUid)
         .map((model) => model.toEntity())
         .toList();
   }
@@ -128,14 +133,20 @@ class TaskRepositoryImpl implements TaskRepository {
   /// All exceptions are caught; failures are logged and silently ignored so
   /// that the app remains fully functional while offline.
   Future<void> _setInFirestore(TaskModel model) async {
-    /*
+    print('--- _setInFirestore called for task: ${model.id} ---');
+    if (_firestore == null) {
+      print('--- _firestore is null! ---');
+      return;
+    }
     try {
-      await _firestore!
+      print('--- Attempting to write to Firestore... ---');
+      await _firestore
           .collection(_kCollection)
           .doc(model.id)
           .set(model.toJson());
-
+      print('--- _setInFirestore SUCCESS ---');
     } catch (e, st) {
+      print('FIRESTORE ERROR: $e');
       log(
         'TaskRepositoryImpl: failed to sync task ${model.id} to Firestore.',
         error: e,
@@ -145,16 +156,18 @@ class TaskRepositoryImpl implements TaskRepository {
       // TODO(team): queue the model for a background sync when connectivity
       // is restored (e.g. using WorkManager / connectivity_plus).
     }
-    */
   }
 
   /// Fetches all tasks from Firestore and refreshes the local Hive box.
   /// Called as a background fire-and-forget inside [getTasks].
   Future<void> _syncFromFirestore() async {
-    /*
+    if (_firestore == null) return;
     try {
+      final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+      if (currentUserUid == null) return;
+
       final snapshot =
-          await _firestore!.collection(_kCollection).get();
+          await _firestore.collection(_kCollection).where('userId', isEqualTo: currentUserUid).get();
 
       for (final doc in snapshot.docs) {
         final model = TaskModel.fromJson(doc.data());
@@ -174,6 +187,5 @@ class TaskRepositoryImpl implements TaskRepository {
         name: 'TaskRepository',
       );
     }
-    */
   }
 }

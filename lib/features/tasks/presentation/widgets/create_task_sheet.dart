@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -74,6 +75,7 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
       imageUrls: _imagePath != null ? [_imagePath!] : const [],
       latitude: _lat,
       longitude: _lng,
+      userId: FirebaseAuth.instance.currentUser?.uid,
     );
 
     ref.read(tasksProvider.notifier).addTask(newTask);

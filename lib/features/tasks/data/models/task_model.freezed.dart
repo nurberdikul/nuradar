@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TaskModel {
 
- String get id; String get title; String get description; DateTime get dueDate; bool get isCompleted; List<String> get imageUrls; String? get category; double? get latitude; double? get longitude;
+ String get id; String get title; String get description; DateTime get dueDate; bool get isCompleted; List<String> get imageUrls; String? get category; double? get latitude; double? get longitude; String? get userId;
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TaskModelCopyWith<TaskModel> get copyWith => _$TaskModelCopyWithImpl<TaskModel>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other.imageUrls, imageUrls)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other.imageUrls, imageUrls)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.userId, userId) || other.userId == userId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,isCompleted,const DeepCollectionEquality().hash(imageUrls),category,latitude,longitude);
+int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,isCompleted,const DeepCollectionEquality().hash(imageUrls),category,latitude,longitude,userId);
 
 @override
 String toString() {
-  return 'TaskModel(id: $id, title: $title, description: $description, dueDate: $dueDate, isCompleted: $isCompleted, imageUrls: $imageUrls, category: $category, latitude: $latitude, longitude: $longitude)';
+  return 'TaskModel(id: $id, title: $title, description: $description, dueDate: $dueDate, isCompleted: $isCompleted, imageUrls: $imageUrls, category: $category, latitude: $latitude, longitude: $longitude, userId: $userId)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $TaskModelCopyWith<$Res>  {
   factory $TaskModelCopyWith(TaskModel value, $Res Function(TaskModel) _then) = _$TaskModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String description, DateTime dueDate, bool isCompleted, List<String> imageUrls, String? category, double? latitude, double? longitude
+ String id, String title, String description, DateTime dueDate, bool isCompleted, List<String> imageUrls, String? category, double? latitude, double? longitude, String? userId
 });
 
 
@@ -65,7 +65,7 @@ class _$TaskModelCopyWithImpl<$Res>
 
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? isCompleted = null,Object? imageUrls = null,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? isCompleted = null,Object? imageUrls = null,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? userId = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -76,7 +76,8 @@ as bool,imageUrls: null == imageUrls ? _self.imageUrls : imageUrls // ignore: ca
 as List<String>,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
-as double?,
+as double?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -161,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TaskModel() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude);case _:
+return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
   return orElse();
 
 }
@@ -182,10 +183,10 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCom
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude,  String? userId)  $default,) {final _that = this;
 switch (_that) {
 case _TaskModel():
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude);case _:
+return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +203,10 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCom
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  DateTime dueDate,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  DateTime dueDate,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,) {final _that = this;
 switch (_that) {
 case _TaskModel() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude);case _:
+return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
   return null;
 
 }
@@ -217,7 +218,7 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCom
 @JsonSerializable()
 
 class _TaskModel extends TaskModel {
-  const _TaskModel({required this.id, required this.title, required this.description, required this.dueDate, this.isCompleted = false, final  List<String> imageUrls = const [], this.category, this.latitude, this.longitude}): _imageUrls = imageUrls,super._();
+  const _TaskModel({required this.id, required this.title, required this.description, required this.dueDate, this.isCompleted = false, final  List<String> imageUrls = const [], this.category, this.latitude, this.longitude, this.userId}): _imageUrls = imageUrls,super._();
   factory _TaskModel.fromJson(Map<String, dynamic> json) => _$TaskModelFromJson(json);
 
 @override final  String id;
@@ -235,6 +236,7 @@ class _TaskModel extends TaskModel {
 @override final  String? category;
 @override final  double? latitude;
 @override final  double? longitude;
+@override final  String? userId;
 
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
@@ -249,16 +251,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other._imageUrls, _imageUrls)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other._imageUrls, _imageUrls)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.userId, userId) || other.userId == userId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,isCompleted,const DeepCollectionEquality().hash(_imageUrls),category,latitude,longitude);
+int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,isCompleted,const DeepCollectionEquality().hash(_imageUrls),category,latitude,longitude,userId);
 
 @override
 String toString() {
-  return 'TaskModel(id: $id, title: $title, description: $description, dueDate: $dueDate, isCompleted: $isCompleted, imageUrls: $imageUrls, category: $category, latitude: $latitude, longitude: $longitude)';
+  return 'TaskModel(id: $id, title: $title, description: $description, dueDate: $dueDate, isCompleted: $isCompleted, imageUrls: $imageUrls, category: $category, latitude: $latitude, longitude: $longitude, userId: $userId)';
 }
 
 
@@ -269,7 +271,7 @@ abstract mixin class _$TaskModelCopyWith<$Res> implements $TaskModelCopyWith<$Re
   factory _$TaskModelCopyWith(_TaskModel value, $Res Function(_TaskModel) _then) = __$TaskModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String description, DateTime dueDate, bool isCompleted, List<String> imageUrls, String? category, double? latitude, double? longitude
+ String id, String title, String description, DateTime dueDate, bool isCompleted, List<String> imageUrls, String? category, double? latitude, double? longitude, String? userId
 });
 
 
@@ -286,7 +288,7 @@ class __$TaskModelCopyWithImpl<$Res>
 
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? isCompleted = null,Object? imageUrls = null,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? isCompleted = null,Object? imageUrls = null,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? userId = freezed,}) {
   return _then(_TaskModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -297,7 +299,8 @@ as bool,imageUrls: null == imageUrls ? _self._imageUrls : imageUrls // ignore: c
 as List<String>,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
-as double?,
+as double?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

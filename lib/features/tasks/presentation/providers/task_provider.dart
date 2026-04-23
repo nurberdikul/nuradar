@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -10,7 +11,7 @@ part 'task_provider.g.dart';
 @riverpod
 TaskRepository taskRepository(Ref ref) {
   return TaskRepositoryImpl(
-    firestore: null, // Временно отключен (Mock-режим)
+    firestore: FirebaseFirestore.instance, // real Firestore instance
     taskBox: Hive.box('offline_tasks'),
   );
 }
@@ -25,15 +26,11 @@ class TasksNotifier extends _$TasksNotifier {
 
   Future<void> addTask(TaskEntity task) async {
     final repository = ref.read(taskRepositoryProvider);
-
-    // Мгновенное обновление UI (Optimistic update)
     final currentTasks = state.value ?? [];
     state = AsyncData([...currentTasks, task]);
-
     try {
       await repository.addTask(task);
     } catch (e, st) {
-      // Откат состояния в случае локальной ошибки
       state = AsyncData(currentTasks);
       state = AsyncError(e, st);
     }
@@ -41,14 +38,9 @@ class TasksNotifier extends _$TasksNotifier {
 
   Future<void> updateTask(TaskEntity task) async {
     final repository = ref.read(taskRepositoryProvider);
-
     final currentTasks = state.value ?? [];
-    final updatedTasks = currentTasks
-        .map((t) => t.id == task.id ? task : t)
-        .toList();
-
+    final updatedTasks = currentTasks.map((t) => t.id == task.id ? task : t).toList();
     state = AsyncData(updatedTasks);
-
     try {
       await repository.updateTask(task);
     } catch (e, st) {
@@ -64,12 +56,9 @@ class TasksNotifier extends _$TasksNotifier {
 
   Future<void> deleteTask(String id) async {
     final repository = ref.read(taskRepositoryProvider);
-
     final currentTasks = state.value ?? [];
     final updatedTasks = currentTasks.where((t) => t.id != id).toList();
-
     state = AsyncData(updatedTasks);
-
     try {
       await repository.deleteTask(id);
     } catch (e, st) {

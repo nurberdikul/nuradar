@@ -18,6 +18,7 @@ _TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => _TaskModel(
   category: json['category'] as String?,
   latitude: (json['latitude'] as num?)?.toDouble(),
   longitude: (json['longitude'] as num?)?.toDouble(),
+  userId: json['userId'] as String?,
 );
 
 Map<String, dynamic> _$TaskModelToJson(_TaskModel instance) =>
@@ -31,4 +32,5 @@ Map<String, dynamic> _$TaskModelToJson(_TaskModel instance) =>
       'category': instance.category,
       'latitude': instance.latitude,
       'longitude': instance.longitude,
+      'userId': instance.userId,
     };

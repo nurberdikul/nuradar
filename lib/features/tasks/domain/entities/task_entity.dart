@@ -16,5 +16,6 @@ abstract class TaskEntity with _$TaskEntity {
     String? category,
     double? latitude,
     double? longitude,
+    String? userId,
   }) = _TaskEntity;
 }

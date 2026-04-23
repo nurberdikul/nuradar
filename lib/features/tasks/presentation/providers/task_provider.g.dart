@@ -48,7 +48,7 @@ final class TaskRepositoryProvider
   }
 }
 
-String _$taskRepositoryHash() => r'90477985c940598a60555954be65e399e006e120';
+String _$taskRepositoryHash() => r'eb6d1f00f0d5d68e57350c2a62949535147611f7';
 
 @ProviderFor(TasksNotifier)
 final tasksProvider = TasksNotifierProvider._();

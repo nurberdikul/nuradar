@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +29,19 @@ class MainScreen extends ConsumerWidget {
       const DashboardPage(),
       const TaskListPage(),
       const MapPage(),
-      const Center(child: Text('Профиль')),
+      Center(
+        child: ElevatedButton.icon(
+          onPressed: () {
+            FirebaseAuth.instance.signOut();
+          },
+          icon: const Icon(Icons.logout),
+          label: const Text('Выйти'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppTheme.errorColor,
+            foregroundColor: Colors.white,
+          ),
+        ),
+      ),
     ];
 
     return Scaffold(

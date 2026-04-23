@@ -18,6 +18,7 @@ abstract class TaskModel with _$TaskModel {
     String? category,
     double? latitude,
     double? longitude,
+    String? userId,
   }) = _TaskModel;
 
   factory TaskModel.fromJson(Map<String, dynamic> json) => _$TaskModelFromJson(json);
@@ -33,6 +34,7 @@ abstract class TaskModel with _$TaskModel {
       category: entity.category,
       latitude: entity.latitude,
       longitude: entity.longitude,
+      userId: entity.userId,
     );
   }
 
@@ -47,6 +49,7 @@ abstract class TaskModel with _$TaskModel {
       category: category,
       latitude: latitude,
       longitude: longitude,
+      userId: userId,
     );
   }
 }

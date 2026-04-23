@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "407758740099",
+    "project_id": "focusbuddy-6a5cf",
+    "storage_bucket": "focusbuddy-6a5cf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407758740099:android:957ab38eb9ca20bb0319b6",
+        "android_client_info": {
+          "package_name": "com.example.focus_buddy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBeO35Oqk6qIODeGSDQRdtPoeNp30h73g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -8,6 +8,7 @@ import '../../../../../core/theme/app_theme.dart';
 import '../../domain/entities/task_entity.dart';
 import '../../domain/entities/task_priority.dart';
 import '../pages/task_detail_page.dart';
+import '../pages/focus_session_page.dart';
 import '../providers/task_provider.dart';
 
 class TaskCard extends ConsumerWidget {
@@ -52,7 +53,12 @@ class TaskCard extends ConsumerWidget {
                 color: AppTheme.primaryColor,
                 iconSize: 32,
                 onPressed: () {
-                  debugPrint('Запуск фокус-сессии для ${task.title}');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FocusSessionPage(task: task),
+                    ),
+                  );
                 },
               ),
               // Task Content

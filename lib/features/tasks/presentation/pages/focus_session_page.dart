@@ -14,21 +14,44 @@ class FocusSessionPage extends ConsumerStatefulWidget {
   ConsumerState<FocusSessionPage> createState() => _FocusSessionPageState();
 }
 
-class _FocusSessionPageState extends ConsumerState<FocusSessionPage> {
-  static const int _totalSeconds = 5; // TODO: Вернуть 25 * 60 после успешного теста
+class _FocusSessionPageState extends ConsumerState<FocusSessionPage> with WidgetsBindingObserver {
+  static const int _totalSeconds = 25 * 60;
   int _remainingSeconds = _totalSeconds;
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _startTimer();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _abortDueToDistraction();
+    }
+  }
+
+  void _abortDueToDistraction() {
+    _timer?.cancel();
+    if (mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Фокус потерян! Не отвлекайтесь на другие приложения 📵'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   void _startTimer() {

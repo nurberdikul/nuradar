@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../tasks/domain/entities/task_entity.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../tasks/presentation/providers/task_provider.dart';
 import '../../../tasks/presentation/widgets/task_card.dart';
 import '../providers/dashboard_providers.dart';
@@ -112,26 +112,31 @@ class DashboardPage extends ConsumerWidget {
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (err, stack) => Center(child: Text('Ошибка загрузки задач: $err')),
                 data: (tasks) {
-                  // Сортировка: Сначала невыполненные, затем по приоритету (High -> Low), затем выполненные
-                  final sortedTasks = List<TaskEntity>.from(tasks);
-                  sortedTasks.sort((a, b) {
-                    if (a.isCompleted != b.isCompleted) {
-                      return a.isCompleted ? 1 : -1;
-                    }
-                    // Если оба выполнены или оба не выполнены, сортируем по приоритету
-                    return b.priority.index.compareTo(a.priority.index);
-                  });
+                  // 1. Фильтруем только невыполненные
+                  final activeTasks = tasks.where((t) => !t.isCompleted).toList();
+                  
+                  // 2. Сортируем по приоритету (High -> Low)
+                  activeTasks.sort((a, b) => b.priority.index.compareTo(a.priority.index));
+                  
+                  // 3. Берем максимум 3 задачи
+                  final topTasks = activeTasks.take(3).toList();
 
-                  if (sortedTasks.isEmpty) {
+                  // 4. Если невыполненных задач нет — показываем пустой стейт успеха
+                  if (topTasks.isEmpty) {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.task_outlined, size: 64, color: Colors.grey[400]),
+                          Icon(Icons.done_all, size: 64, color: AppTheme.successColor),
                           const SizedBox(height: 16),
-                          const Text(
-                            'Задач пока нет',
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          Text(
+                            'На сегодня всё! Ты молодец 🎉',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.successColor,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
@@ -139,9 +144,9 @@ class DashboardPage extends ConsumerWidget {
                   }
 
                   return ListView.builder(
-                    itemCount: sortedTasks.length,
+                    itemCount: topTasks.length,
                     itemBuilder: (context, index) {
-                      return TaskCard(task: sortedTasks[index]);
+                      return TaskCard(task: topTasks[index]);
                     },
                   );
                 },

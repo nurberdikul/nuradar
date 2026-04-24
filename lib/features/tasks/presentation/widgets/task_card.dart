@@ -90,15 +90,27 @@ class TaskCard extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                task.title,
-                                style: TextStyle(
-                                  decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-                                  color: task.isCompleted ? Colors.grey : null,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        task.title,
+                                        style: TextStyle(
+                                          decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                                          color: task.isCompleted ? Colors.grey : null,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                    if (task.imageUrls.isNotEmpty)
+                                      const Icon(
+                                        Icons.image,
+                                        size: 16,
+                                        color: Colors.grey,
+                                      ),
+                                  ],
                                 ),
-                              ),
                               if (task.category != null)
                                 Text(
                                   task.category!,

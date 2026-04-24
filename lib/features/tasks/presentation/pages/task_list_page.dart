@@ -21,20 +21,41 @@ class TaskListPage extends ConsumerWidget {
           if (tasks.isEmpty) {
             return const Center(
               child: Text(
-                'Нет задач',
+                'У вас пока нет задач',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             );
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: tasks.length,
-            itemBuilder: (context, index) {
-              final task = tasks[index];
+          final activeTasks = tasks.where((t) => !t.isCompleted).toList();
+          final completedTasks = tasks.where((t) => t.isCompleted).toList();
 
-              return TaskCard(task: task);
-            },
+          // Сортировка активных задач по приоритету (High -> Low)
+          activeTasks.sort((a, b) => b.priority.index.compareTo(a.priority.index));
+
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              // Активные задачи
+              ...activeTasks.map((task) => TaskCard(task: task)),
+
+              // Заголовок для выполненных задач
+              if (completedTasks.isNotEmpty) ...[
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Text(
+                    'Выполненные',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+                // Выполненные задачи
+                ...completedTasks.map((task) => TaskCard(task: task)),
+              ],
+            ],
           );
         },
       ),

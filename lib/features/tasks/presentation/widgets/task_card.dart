@@ -119,11 +119,34 @@ class TaskCard extends ConsumerWidget {
                                       ),
                                   ],
                                 ),
-                              if (task.category != null)
-                                Text(
-                                  task.category!,
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
+                                if (task.milestones.isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(4),
+                                    child: LinearProgressIndicator(
+                                      value: task.milestones.where((m) => m.isDone).length /
+                                          task.milestones.length,
+                                      backgroundColor: Colors.grey[200],
+                                      color: AppTheme.successColor,
+                                      minHeight: 6,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${task.milestones.where((m) => m.isDone).length}/${task.milestones.length} шагов выполнено',
+                                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                          color: Colors.grey,
+                                        ),
+                                  ),
+                                ],
+                                if (task.category != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4.0),
+                                    child: Text(
+                                      task.category!,
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ),
                             ],
                           ),
                         ),

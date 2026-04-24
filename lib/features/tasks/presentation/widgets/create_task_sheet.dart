@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/task_entity.dart';
 import '../../domain/entities/task_priority.dart';
 import '../providers/task_provider.dart';
@@ -20,6 +21,8 @@ class CreateTaskSheet extends ConsumerStatefulWidget {
 class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
+  final _milestoneController = TextEditingController();
+  final List<String> _milestoneTitles = [];
   String? _imagePath;
   double? _lat;
   double? _lng;
@@ -29,6 +32,7 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
   void dispose() {
     _titleController.dispose();
     _descController.dispose();
+    _milestoneController.dispose();
     super.dispose();
   }
 
@@ -64,6 +68,22 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
     });
   }
 
+  void _addMilestone() {
+    final text = _milestoneController.text.trim();
+    if (text.isNotEmpty) {
+      setState(() {
+        _milestoneTitles.add(text);
+        _milestoneController.clear();
+      });
+    }
+  }
+
+  void _removeMilestone(int index) {
+    setState(() {
+      _milestoneTitles.removeAt(index);
+    });
+  }
+
   void _createTask() {
     final title = _titleController.text.trim();
     if (title.isEmpty) return; // Можно добавить показ ошибки, если нужно
@@ -76,6 +96,11 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
       priority: _selectedPriority,
       isCompleted: false,
       imageUrls: _imagePath != null ? [_imagePath!] : const [],
+      milestones: _milestoneTitles.map((title) => Milestone(
+        id: const Uuid().v4(),
+        title: title,
+        isDone: false,
+      )).toList(),
       latitude: _lat,
       longitude: _lng,
       userId: FirebaseAuth.instance.currentUser?.uid,
@@ -161,6 +186,52 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
               );
             }).toList(),
           ),
+          const SizedBox(height: 16),
+          // Milestones Section
+          Text(
+            'Шаги к цели',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _milestoneController,
+                  decoration: const InputDecoration(
+                    hintText: 'Что нужно сделать?',
+                    isDense: true,
+                  ),
+                  onSubmitted: (_) => _addMilestone(),
+                ),
+              ),
+              IconButton(
+                onPressed: _addMilestone,
+                icon: const Icon(Icons.add_circle_outline),
+                color: AppTheme.primaryColor,
+              ),
+            ],
+          ),
+          if (_milestoneTitles.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Column(
+                children: _milestoneTitles.asMap().entries.map((entry) {
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    leading: const Icon(Icons.circle, size: 8),
+                    title: Text(entry.value),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.close, size: 16),
+                      onPressed: () => _removeMilestone(entry.key),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
           const SizedBox(height: 16),
           if (_imagePath != null)
             Padding(

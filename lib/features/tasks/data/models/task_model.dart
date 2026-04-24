@@ -6,6 +6,35 @@ part 'task_model.freezed.dart';
 part 'task_model.g.dart';
 
 @freezed
+abstract class MilestoneModel with _$MilestoneModel {
+  const MilestoneModel._();
+
+  const factory MilestoneModel({
+    required String id,
+    required String title,
+    @Default(false) bool isDone,
+  }) = _MilestoneModel;
+
+  factory MilestoneModel.fromJson(Map<String, dynamic> json) => _$MilestoneModelFromJson(json);
+
+  factory MilestoneModel.fromEntity(Milestone entity) {
+    return MilestoneModel(
+      id: entity.id,
+      title: entity.title,
+      isDone: entity.isDone,
+    );
+  }
+
+  Milestone toEntity() {
+    return Milestone(
+      id: id,
+      title: title,
+      isDone: isDone,
+    );
+  }
+}
+
+@freezed
 abstract class TaskModel with _$TaskModel {
   const TaskModel._();
 
@@ -17,6 +46,10 @@ abstract class TaskModel with _$TaskModel {
     @Default(TaskPriority.medium) TaskPriority priority,
     @Default(false) bool isCompleted,
     @Default([]) List<String> imageUrls,
+    @Default([]) List<MilestoneModel> milestones,
+    @Default(0) int totalFocusTime,
+    @Default(0) int actualFocusTime,
+    @Default(false) bool wasInterrupted,
     String? category,
     double? latitude,
     double? longitude,
@@ -34,6 +67,10 @@ abstract class TaskModel with _$TaskModel {
       priority: entity.priority,
       isCompleted: entity.isCompleted,
       imageUrls: entity.imageUrls,
+      milestones: entity.milestones.map((m) => MilestoneModel.fromEntity(m)).toList(),
+      totalFocusTime: entity.totalFocusTime,
+      actualFocusTime: entity.actualFocusTime,
+      wasInterrupted: entity.wasInterrupted,
       category: entity.category,
       latitude: entity.latitude,
       longitude: entity.longitude,
@@ -50,6 +87,10 @@ abstract class TaskModel with _$TaskModel {
       priority: priority,
       isCompleted: isCompleted,
       imageUrls: imageUrls,
+      milestones: milestones.map((m) => m.toEntity()).toList(),
+      totalFocusTime: totalFocusTime,
+      actualFocusTime: actualFocusTime,
+      wasInterrupted: wasInterrupted,
       category: category,
       latitude: latitude,
       longitude: longitude,

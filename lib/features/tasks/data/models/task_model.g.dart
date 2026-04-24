@@ -6,6 +6,20 @@ part of 'task_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+_MilestoneModel _$MilestoneModelFromJson(Map<String, dynamic> json) =>
+    _MilestoneModel(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      isDone: json['isDone'] as bool? ?? false,
+    );
+
+Map<String, dynamic> _$MilestoneModelToJson(_MilestoneModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'isDone': instance.isDone,
+    };
+
 _TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => _TaskModel(
   id: json['id'] as String,
   title: json['title'] as String,
@@ -18,6 +32,14 @@ _TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => _TaskModel(
   imageUrls:
       (json['imageUrls'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const [],
+  milestones:
+      (json['milestones'] as List<dynamic>?)
+          ?.map((e) => MilestoneModel.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  totalFocusTime: (json['totalFocusTime'] as num?)?.toInt() ?? 0,
+  actualFocusTime: (json['actualFocusTime'] as num?)?.toInt() ?? 0,
+  wasInterrupted: json['wasInterrupted'] as bool? ?? false,
   category: json['category'] as String?,
   latitude: (json['latitude'] as num?)?.toDouble(),
   longitude: (json['longitude'] as num?)?.toDouble(),
@@ -33,6 +55,10 @@ Map<String, dynamic> _$TaskModelToJson(_TaskModel instance) =>
       'priority': _$TaskPriorityEnumMap[instance.priority]!,
       'isCompleted': instance.isCompleted,
       'imageUrls': instance.imageUrls,
+      'milestones': instance.milestones,
+      'totalFocusTime': instance.totalFocusTime,
+      'actualFocusTime': instance.actualFocusTime,
+      'wasInterrupted': instance.wasInterrupted,
       'category': instance.category,
       'latitude': instance.latitude,
       'longitude': instance.longitude,

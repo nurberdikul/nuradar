@@ -4,6 +4,15 @@ import 'task_priority.dart';
 part 'task_entity.freezed.dart';
 
 @freezed
+abstract class Milestone with _$Milestone {
+  const factory Milestone({
+    required String id,
+    required String title,
+    @Default(false) bool isDone,
+  }) = _Milestone;
+}
+
+@freezed
 abstract class TaskEntity with _$TaskEntity {
   const TaskEntity._();
 
@@ -15,6 +24,10 @@ abstract class TaskEntity with _$TaskEntity {
     @Default(TaskPriority.medium) TaskPriority priority,
     @Default(false) bool isCompleted,
     @Default([]) List<String> imageUrls,
+    @Default([]) List<Milestone> milestones,
+    @Default(0) int totalFocusTime,
+    @Default(0) int actualFocusTime,
+    @Default(false) bool wasInterrupted,
     String? category,
     double? latitude,
     double? longitude,

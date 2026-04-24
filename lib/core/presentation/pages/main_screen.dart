@@ -60,14 +60,50 @@ class MainScreen extends ConsumerWidget {
               // Task count
               Builder(builder: (context) {
                 final tasksAsync = ref.watch(tasksProvider);
-                final count = tasksAsync.when(
-                  data: (tasks) => tasks.length,
-                  loading: () => 0,
-                  error: (_, __) => 0,
-                );
-                return Text(
-                  'Завершено фокус-сессий: $count',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                return tasksAsync.when(
+                  data: (tasks) {
+                    final sessions = tasks.where((t) => t.totalFocusTime > 0).toList();
+                    if (sessions.isEmpty) {
+                      return const Text('Нет данных о фокусе');
+                    }
+
+                    int totalPlanned = 0;
+                    int totalActual = 0;
+                    int interruptions = 0;
+                    int secondsLost = 0;
+
+                    for (final task in sessions) {
+                      totalPlanned += task.totalFocusTime;
+                      totalActual += task.actualFocusTime;
+                      if (task.wasInterrupted) {
+                        interruptions++;
+                        secondsLost += (task.totalFocusTime - task.actualFocusTime);
+                      }
+                    }
+
+                    final focusIndex = (totalActual / totalPlanned * 100).round();
+                    final indexColor = focusIndex >= 50 ? AppTheme.successColor : AppTheme.errorColor;
+
+                    return Column(
+                      children: [
+                        Text(
+                          'Индекс Фокуса: $focusIndex%',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: indexColor,
+                              ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Ты сорвался $interruptions раз на этой неделе,\nпотеряв ${secondsLost ~/ 60} минут фокуса',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                        ),
+                      ],
+                    );
+                  },
+                  loading: () => const CircularProgressIndicator(),
+                  error: (_, __) => const Text('Ошибка загрузки статистики'),
                 );
               }),
               const SizedBox(height: 32),

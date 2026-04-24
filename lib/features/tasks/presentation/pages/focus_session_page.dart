@@ -41,6 +41,7 @@ class _FocusSessionPageState extends ConsumerState<FocusSessionPage> with Widget
   }
 
   void _abortDueToDistraction() {
+    _saveSessionStats(interrupted: true);
     _timer?.cancel();
     if (mounted) {
       Navigator.pop(context);
@@ -54,6 +55,17 @@ class _FocusSessionPageState extends ConsumerState<FocusSessionPage> with Widget
     }
   }
 
+  void _saveSessionStats({required bool interrupted}) {
+    final actualTime = _totalSeconds - _remainingSeconds;
+    final updatedTask = widget.task.copyWith(
+      actualFocusTime: actualTime,
+      totalFocusTime: _totalSeconds,
+      wasInterrupted: interrupted,
+      isCompleted: !interrupted,
+    );
+    ref.read(tasksProvider.notifier).updateTask(updatedTask);
+  }
+
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingSeconds > 0) {
@@ -62,8 +74,8 @@ class _FocusSessionPageState extends ConsumerState<FocusSessionPage> with Widget
         });
       } else {
         _timer?.cancel();
-        // Отмечаем задачу как выполненную
-        ref.read(tasksProvider.notifier).toggleTaskCompletion(widget.task);
+        // Сохраняем успешную статистику и отмечаем выполненным
+        _saveSessionStats(interrupted: false);
         _showCompletionDialog();
       }
     });
@@ -196,6 +208,7 @@ class _FocusSessionPageState extends ConsumerState<FocusSessionPage> with Widget
           ),
           TextButton(
             onPressed: () {
+              _saveSessionStats(interrupted: true);
               Navigator.pop(context); // Close dialog
               Navigator.pop(context); // Exit session
             },

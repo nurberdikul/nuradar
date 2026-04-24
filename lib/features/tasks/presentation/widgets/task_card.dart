@@ -46,11 +46,13 @@ class TaskCard extends ConsumerWidget {
               ),
               const SizedBox(width: 4),
               // Completion Checkbox
-              Checkbox(
-                activeColor: AppTheme.successColor,
-                value: task.isCompleted,
-                onChanged: (bool? value) {
-                  ref.read(tasksProvider.notifier).toggleTaskCompletion(task);
+              // Focus Start Button
+              IconButton(
+                icon: const Icon(Icons.play_circle_fill),
+                color: AppTheme.primaryColor,
+                iconSize: 32,
+                onPressed: () {
+                  debugPrint('Запуск фокус-сессии для ${task.title}');
                 },
               ),
               // Task Content

@@ -99,7 +99,7 @@ class DashboardPage extends ConsumerWidget {
 
             // Заголовок списка
             Text(
-              'Сегодня',
+              'Готовы к фокусу?',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -127,14 +127,14 @@ class DashboardPage extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.done_all, size: 64, color: AppTheme.successColor),
+                          Icon(Icons.timer, size: 64, color: AppTheme.primaryColor),
                           const SizedBox(height: 16),
                           Text(
-                            'На сегодня всё! Ты молодец 🎉',
+                            'Нет активных целей. Добавь цель и запусти таймер!',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: AppTheme.successColor,
+                              color: AppTheme.primaryColor,
                             ),
                             textAlign: TextAlign.center,
                           ),

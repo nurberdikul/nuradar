@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TaskEntity {
 
- String get id; String get title; String get description; DateTime get dueDate; bool get isCompleted; List<String> get imageUrls; String? get category; double? get latitude; double? get longitude; String? get userId;
+ String get id; String get title; String get description; DateTime get dueDate; TaskPriority get priority; bool get isCompleted; List<String> get imageUrls; String? get category; double? get latitude; double? get longitude; String? get userId;
 /// Create a copy of TaskEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $TaskEntityCopyWith<TaskEntity> get copyWith => _$TaskEntityCopyWithImpl<TaskEnt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other.imageUrls, imageUrls)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other.imageUrls, imageUrls)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.userId, userId) || other.userId == userId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,isCompleted,const DeepCollectionEquality().hash(imageUrls),category,latitude,longitude,userId);
+int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,priority,isCompleted,const DeepCollectionEquality().hash(imageUrls),category,latitude,longitude,userId);
 
 @override
 String toString() {
-  return 'TaskEntity(id: $id, title: $title, description: $description, dueDate: $dueDate, isCompleted: $isCompleted, imageUrls: $imageUrls, category: $category, latitude: $latitude, longitude: $longitude, userId: $userId)';
+  return 'TaskEntity(id: $id, title: $title, description: $description, dueDate: $dueDate, priority: $priority, isCompleted: $isCompleted, imageUrls: $imageUrls, category: $category, latitude: $latitude, longitude: $longitude, userId: $userId)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $TaskEntityCopyWith<$Res>  {
   factory $TaskEntityCopyWith(TaskEntity value, $Res Function(TaskEntity) _then) = _$TaskEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String description, DateTime dueDate, bool isCompleted, List<String> imageUrls, String? category, double? latitude, double? longitude, String? userId
+ String id, String title, String description, DateTime dueDate, TaskPriority priority, bool isCompleted, List<String> imageUrls, String? category, double? latitude, double? longitude, String? userId
 });
 
 
@@ -62,13 +62,14 @@ class _$TaskEntityCopyWithImpl<$Res>
 
 /// Create a copy of TaskEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? isCompleted = null,Object? imageUrls = null,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? userId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? priority = null,Object? isCompleted = null,Object? imageUrls = null,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? userId = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,dueDate: null == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
-as DateTime,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
+as DateTime,priority: null == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
+as TaskPriority,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
 as bool,imageUrls: null == imageUrls ? _self.imageUrls : imageUrls // ignore: cast_nullable_to_non_nullable
 as List<String>,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
@@ -159,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TaskEntity() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
+return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
   return orElse();
 
 }
@@ -180,10 +181,10 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCom
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude,  String? userId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude,  String? userId)  $default,) {final _that = this;
 switch (_that) {
 case _TaskEntity():
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
+return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +201,10 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCom
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  DateTime dueDate,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,) {final _that = this;
 switch (_that) {
 case _TaskEntity() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
+return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
   return null;
 
 }
@@ -215,13 +216,14 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.isCom
 
 
 class _TaskEntity extends TaskEntity {
-  const _TaskEntity({required this.id, required this.title, required this.description, required this.dueDate, this.isCompleted = false, final  List<String> imageUrls = const [], this.category, this.latitude, this.longitude, this.userId}): _imageUrls = imageUrls,super._();
+  const _TaskEntity({required this.id, required this.title, required this.description, required this.dueDate, this.priority = TaskPriority.medium, this.isCompleted = false, final  List<String> imageUrls = const [], this.category, this.latitude, this.longitude, this.userId}): _imageUrls = imageUrls,super._();
   
 
 @override final  String id;
 @override final  String title;
 @override final  String description;
 @override final  DateTime dueDate;
+@override@JsonKey() final  TaskPriority priority;
 @override@JsonKey() final  bool isCompleted;
  final  List<String> _imageUrls;
 @override@JsonKey() List<String> get imageUrls {
@@ -245,16 +247,16 @@ _$TaskEntityCopyWith<_TaskEntity> get copyWith => __$TaskEntityCopyWithImpl<_Tas
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other._imageUrls, _imageUrls)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other._imageUrls, _imageUrls)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.userId, userId) || other.userId == userId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,isCompleted,const DeepCollectionEquality().hash(_imageUrls),category,latitude,longitude,userId);
+int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,priority,isCompleted,const DeepCollectionEquality().hash(_imageUrls),category,latitude,longitude,userId);
 
 @override
 String toString() {
-  return 'TaskEntity(id: $id, title: $title, description: $description, dueDate: $dueDate, isCompleted: $isCompleted, imageUrls: $imageUrls, category: $category, latitude: $latitude, longitude: $longitude, userId: $userId)';
+  return 'TaskEntity(id: $id, title: $title, description: $description, dueDate: $dueDate, priority: $priority, isCompleted: $isCompleted, imageUrls: $imageUrls, category: $category, latitude: $latitude, longitude: $longitude, userId: $userId)';
 }
 
 
@@ -265,7 +267,7 @@ abstract mixin class _$TaskEntityCopyWith<$Res> implements $TaskEntityCopyWith<$
   factory _$TaskEntityCopyWith(_TaskEntity value, $Res Function(_TaskEntity) _then) = __$TaskEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String description, DateTime dueDate, bool isCompleted, List<String> imageUrls, String? category, double? latitude, double? longitude, String? userId
+ String id, String title, String description, DateTime dueDate, TaskPriority priority, bool isCompleted, List<String> imageUrls, String? category, double? latitude, double? longitude, String? userId
 });
 
 
@@ -282,13 +284,14 @@ class __$TaskEntityCopyWithImpl<$Res>
 
 /// Create a copy of TaskEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? isCompleted = null,Object? imageUrls = null,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? userId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? priority = null,Object? isCompleted = null,Object? imageUrls = null,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? userId = freezed,}) {
   return _then(_TaskEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,dueDate: null == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
-as DateTime,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
+as DateTime,priority: null == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
+as TaskPriority,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
 as bool,imageUrls: null == imageUrls ? _self._imageUrls : imageUrls // ignore: cast_nullable_to_non_nullable
 as List<String>,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/task_entity.dart';
+import '../../domain/entities/task_priority.dart';
 import '../providers/task_provider.dart';
 
 class CreateTaskSheet extends ConsumerStatefulWidget {
@@ -23,6 +24,7 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
   String? _imagePath;
   double? _lat;
   double? _lng;
+  TaskPriority _selectedPriority = TaskPriority.medium;
 
   @override
   void dispose() {
@@ -72,6 +74,8 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
       title: title,
       description: _descController.text.trim(),
       dueDate: DateTime.now(),
+      priority: _selectedPriority,
+      isCompleted: false,
       imageUrls: _imagePath != null ? [_imagePath!] : const [],
       latitude: _lat,
       longitude: _lng,
@@ -123,6 +127,42 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
             minLines: 1,
           ),
           const SizedBox(height: 16),
+          Text(
+            'Приоритет',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: TaskPriority.values.map((priority) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ChoiceChip(
+                  label: Text(
+                    priority.name.toUpperCase(),
+                    style: TextStyle(
+                      color: _selectedPriority == priority
+                          ? _getPriorityColor(priority)
+                          : Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  selected: _selectedPriority == priority,
+                  onSelected: (selected) {
+                    if (selected) {
+                      setState(() {
+                        _selectedPriority = priority;
+                      });
+                    }
+                  },
+                  selectedColor: _getPriorityColor(priority).withValues(alpha: 0.3),
+                  checkmarkColor: _getPriorityColor(priority),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 16),
           if (_imagePath != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -168,5 +208,16 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
         ],
       ),
     );
+  }
+
+  Color _getPriorityColor(TaskPriority priority) {
+    switch (priority) {
+      case TaskPriority.high:
+        return Colors.redAccent;
+      case TaskPriority.medium:
+        return Colors.orangeAccent;
+      case TaskPriority.low:
+        return Colors.lightBlue;
+    }
   }
 }

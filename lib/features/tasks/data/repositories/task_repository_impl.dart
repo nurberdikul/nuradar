@@ -26,7 +26,7 @@ class TaskRepositoryImpl implements TaskRepository {
 
   static const String _kCollection = 'tasks';
 
-  const TaskRepositoryImpl({FirebaseFirestore? firestore, required Box taskBox})
+  TaskRepositoryImpl({FirebaseFirestore? firestore, required Box taskBox})
     : _firestore = firestore ?? FirebaseFirestore.instance,
       _taskBox = taskBox;
 

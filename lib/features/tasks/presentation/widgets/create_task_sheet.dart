@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -165,25 +164,21 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
           const SizedBox(height: 16),
           if (_imagePath != null)
             Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: 12),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: SizedBox(
-                  height: 150,
-                  width: double.infinity,
-                  child: kIsWeb
-                      ? Image.network(_imagePath!, fit: BoxFit.cover)
-                      : Image.file(File(_imagePath!), fit: BoxFit.cover),
+                borderRadius: BorderRadius.circular(8),
+                child: Image.file(
+                  File(_imagePath!),
+                  height: 60,
+                  width: 60,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-          OutlinedButton.icon(
+          TextButton.icon(
             onPressed: _takePhoto,
             icon: const Icon(Icons.camera_alt),
-            label: const Text('Сделать фото'),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
+            label: const Text('Прикрепить конспект'),
           ),
           const SizedBox(height: 12),
           OutlinedButton.icon(

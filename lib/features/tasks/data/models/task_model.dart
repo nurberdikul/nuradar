@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/entities/task_entity.dart';
+import '../../domain/entities/task_priority.dart';
 
 part 'task_model.freezed.dart';
 part 'task_model.g.dart';
@@ -13,6 +14,7 @@ abstract class TaskModel with _$TaskModel {
     required String title,
     required String description,
     required DateTime dueDate,
+    @Default(TaskPriority.medium) TaskPriority priority,
     @Default(false) bool isCompleted,
     @Default([]) List<String> imageUrls,
     String? category,
@@ -29,6 +31,7 @@ abstract class TaskModel with _$TaskModel {
       title: entity.title,
       description: entity.description,
       dueDate: entity.dueDate,
+      priority: entity.priority,
       isCompleted: entity.isCompleted,
       imageUrls: entity.imageUrls,
       category: entity.category,
@@ -44,6 +47,7 @@ abstract class TaskModel with _$TaskModel {
       title: title,
       description: description,
       dueDate: dueDate,
+      priority: priority,
       isCompleted: isCompleted,
       imageUrls: imageUrls,
       category: category,

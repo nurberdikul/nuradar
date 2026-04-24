@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../../core/theme/app_theme.dart';
+import '../../../tasks/domain/entities/task_entity.dart';
 import '../../../tasks/presentation/providers/task_provider.dart';
 import '../../../tasks/presentation/widgets/task_card.dart';
 import '../providers/dashboard_providers.dart';
@@ -31,11 +32,18 @@ class DashboardPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Приветствие и дата
-            Text(
-              'Привет, Нурдаулет 👋',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            Builder(
+              builder: (context) {
+                final user = FirebaseAuth.instance.currentUser;
+                final email = user?.email ?? 'User';
+                final name = email.split('@')[0];
+                return Text(
+                  'Привет, $name 👋',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
+                );
+              },
             ),
             const SizedBox(height: 4),
             Text(
@@ -104,25 +112,26 @@ class DashboardPage extends ConsumerWidget {
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (err, stack) => Center(child: Text('Ошибка загрузки задач: $err')),
                 data: (tasks) {
-                  final activeTasks = tasks.where((t) => !t.isCompleted).toList();
-                  activeTasks.sort((a, b) => a.dueDate.compareTo(b.dueDate));
-                  
-                  final topTasks = activeTasks.take(3).toList();
+                  // Сортировка: Сначала невыполненные, затем по приоритету (High -> Low), затем выполненные
+                  final sortedTasks = List<TaskEntity>.from(tasks);
+                  sortedTasks.sort((a, b) {
+                    if (a.isCompleted != b.isCompleted) {
+                      return a.isCompleted ? 1 : -1;
+                    }
+                    // Если оба выполнены или оба не выполнены, сортируем по приоритету
+                    return b.priority.index.compareTo(a.priority.index);
+                  });
 
-                  if (topTasks.isEmpty) {
+                  if (sortedTasks.isEmpty) {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.done_all, size: 64, color: AppTheme.successColor),
+                          Icon(Icons.task_outlined, size: 64, color: Colors.grey[400]),
                           const SizedBox(height: 16),
-                          Text(
-                            'На сегодня всё! Ты молодец 🎉',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.successColor,
-                            ),
+                          const Text(
+                            'Задач пока нет',
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
                           ),
                         ],
                       ),
@@ -130,9 +139,9 @@ class DashboardPage extends ConsumerWidget {
                   }
 
                   return ListView.builder(
-                    itemCount: topTasks.length,
+                    itemCount: sortedTasks.length,
                     itemBuilder: (context, index) {
-                      return TaskCard(task: topTasks[index]);
+                      return TaskCard(task: sortedTasks[index]);
                     },
                   );
                 },

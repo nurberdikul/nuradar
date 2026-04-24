@@ -6,6 +6,7 @@ import '../../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../../features/map_spots/presentation/pages/map_page.dart';
 import '../../../features/tasks/presentation/pages/task_list_page.dart';
 import '../../theme/app_theme.dart';
+import '../../../features/tasks/presentation/providers/task_provider.dart';
 
 class NavigationIndexNotifier extends Notifier<int> {
   @override
@@ -30,15 +31,57 @@ class MainScreen extends ConsumerWidget {
       const TaskListPage(),
       const MapPage(),
       Center(
-        child: ElevatedButton.icon(
-          onPressed: () {
-            FirebaseAuth.instance.signOut();
-          },
-          icon: const Icon(Icons.logout),
-          label: const Text('Выйти'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.errorColor,
-            foregroundColor: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Avatar with initial
+              CircleAvatar(
+                radius: 48,
+                backgroundColor: AppTheme.primaryLight,
+                child: Builder(builder: (context) {
+                  final email = FirebaseAuth.instance.currentUser?.email ?? 'User';
+                  final name = email.split('@')[0];
+                  final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+                  return Text(
+                    initial,
+                    style: const TextStyle(fontSize: 40, color: Colors.white),
+                  );
+                }),
+              ),
+              const SizedBox(height: 16),
+              // Full email
+              Text(
+                FirebaseAuth.instance.currentUser?.email ?? 'User',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 24),
+              // Task count
+              Builder(builder: (context) {
+                final tasksAsync = ref.watch(tasksProvider);
+                final count = tasksAsync.when(
+                  data: (tasks) => tasks.length,
+                  loading: () => 0,
+                  error: (_, __) => 0,
+                );
+                return Text(
+                  'Всего задач: $count',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                );
+              }),
+              const SizedBox(height: 32),
+              // Sign out button
+              ElevatedButton.icon(
+                onPressed: () => FirebaseAuth.instance.signOut(),
+                icon: const Icon(Icons.logout),
+                label: const Text('Выйти'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
           ),
         ),
       ),

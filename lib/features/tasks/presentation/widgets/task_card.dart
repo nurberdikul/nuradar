@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/theme/app_theme.dart';
 import '../../domain/entities/task_entity.dart';
+import '../../domain/entities/task_priority.dart';
 import '../pages/task_detail_page.dart';
 import '../providers/task_provider.dart';
 
@@ -34,53 +35,17 @@ class TaskCard extends ConsumerWidget {
       },
       child: Card(
         margin: const EdgeInsets.only(bottom: 12),
-        child: ListTile(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TaskDetailPage(task: task),
-              ),
-            );
-          },
-          leading: task.imageUrls.isNotEmpty
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: SizedBox(
-                    width: 48,
-                    height: 48,
-                    child: kIsWeb
-                        ? Image.network(
-                            task.imageUrls.first,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.file(
-                            File(task.imageUrls.first),
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                )
-              : null,
-          title: Text(
-            task.title,
-            style: TextStyle(
-              decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-              color: task.isCompleted ? Colors.grey : null,
-            ),
-          ),
-          subtitle: task.category != null ? Text(task.category!) : null,
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
+        clipBehavior: Clip.antiAlias,
+        child: IntrinsicHeight(
+          child: Row(
             children: [
-              if (task.latitude != null && task.longitude != null)
-                const Padding(
-                  padding: EdgeInsets.only(right: 8.0),
-                  child: Icon(
-                    Icons.location_on,
-                    size: 20,
-                    color: Colors.blue,
-                  ),
-                ),
+              // Priority indicator
+              Container(
+                width: 6,
+                color: _getPriorityColor(task.priority),
+              ),
+              const SizedBox(width: 4),
+              // Completion Checkbox
               Checkbox(
                 activeColor: AppTheme.successColor,
                 value: task.isCompleted,
@@ -88,10 +53,85 @@ class TaskCard extends ConsumerWidget {
                   ref.read(tasksProvider.notifier).toggleTaskCompletion(task);
                 },
               ),
+              // Task Content
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TaskDetailPage(task: task),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                    child: Row(
+                      children: [
+                        if (task.imageUrls.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: SizedBox(
+                                width: 48,
+                                height: 48,
+                                child: kIsWeb
+                                    ? Image.network(task.imageUrls.first, fit: BoxFit.cover)
+                                    : Image.file(
+                                        File(task.imageUrls.first),
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                            ),
+                          ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                task.title,
+                                style: TextStyle(
+                                  decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                                  color: task.isCompleted ? Colors.grey : null,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              if (task.category != null)
+                                Text(
+                                  task.category!,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (task.latitude != null && task.longitude != null)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Icon(Icons.location_on, size: 20, color: Colors.blue),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Color _getPriorityColor(TaskPriority priority) {
+    switch (priority) {
+      case TaskPriority.high:
+        return Colors.redAccent;
+      case TaskPriority.medium:
+        return Colors.orangeAccent;
+      case TaskPriority.low:
+        return Colors.lightBlue;
+    }
   }
 }

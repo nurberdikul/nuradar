@@ -66,7 +66,7 @@ class MainScreen extends ConsumerWidget {
                   error: (_, __) => 0,
                 );
                 return Text(
-                  'Всего задач: $count',
+                  'Завершено фокус-сессий: $count',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 );
               }),
@@ -103,12 +103,12 @@ class MainScreen extends ConsumerWidget {
             label: 'Главная',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.task_alt),
-            label: 'Задачи',
+            icon: Icon(Icons.track_changes),
+            label: 'Цели',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
-            label: 'Радар',
+            label: 'Зоны фокуса',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

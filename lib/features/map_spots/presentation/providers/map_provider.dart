@@ -1,13 +1,57 @@
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'map_provider.g.dart';
+import '../../../tasks/domain/entities/task_entity.dart';
 
-@riverpod
-class MapNotifier extends _$MapNotifier {
-  @override
-  FutureOr<Position> build() async {
-    return _determinePosition();
+class MapProvider extends ChangeNotifier {
+  Position? _position;
+  bool _isLoading = true;
+  String? _error;
+
+  Position? get position => _position;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+
+  MapProvider() {
+    _initLocation();
+  }
+
+  Future<void> _initLocation() async {
+    await updateLocation();
+  }
+
+  Future<void> updateLocation() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      _position = await _determinePosition();
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  TaskEntity? checkNearbyTasks(List<TaskEntity> tasks) {
+    if (_position == null) return null;
+
+    for (final task in tasks) {
+      if (task.latitude != null && task.longitude != null && !task.isCompleted) {
+        final distance = Geolocator.distanceBetween(
+          _position!.latitude,
+          _position!.longitude,
+          task.latitude!,
+          task.longitude!,
+        );
+
+        if (distance <= 100) {
+          return task;
+        }
+      }
+    }
+    return null;
   }
 
   Future<Position> _determinePosition() async {

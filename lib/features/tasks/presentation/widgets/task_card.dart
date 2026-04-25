@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../core/theme/app_theme.dart';
 import '../../domain/entities/task_entity.dart';
@@ -11,7 +11,7 @@ import '../pages/task_detail_page.dart';
 import '../pages/focus_session_page.dart';
 import '../providers/task_provider.dart';
 
-class TaskCard extends ConsumerWidget {
+class TaskCard extends StatelessWidget {
   final TaskEntity task;
 
   const TaskCard({super.key, required this.task});
@@ -42,7 +42,7 @@ class TaskCard extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Dismissible(
       key: ValueKey(task.id),
       direction: DismissDirection.endToStart,
@@ -57,7 +57,7 @@ class TaskCard extends ConsumerWidget {
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       onDismissed: (_) {
-        ref.read(tasksProvider.notifier).deleteTask(task.id);
+        context.read<TaskProvider>().deleteTask(task.id);
       },
       child: Card(
         margin: const EdgeInsets.only(bottom: 12),

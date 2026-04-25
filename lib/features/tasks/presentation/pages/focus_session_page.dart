@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/task_entity.dart';
 import '../providers/task_provider.dart';
 
-class FocusSessionPage extends ConsumerStatefulWidget {
+class FocusSessionPage extends StatefulWidget {
   final TaskEntity task;
 
   const FocusSessionPage({super.key, required this.task});
 
   @override
-  ConsumerState<FocusSessionPage> createState() => _FocusSessionPageState();
+  State<FocusSessionPage> createState() => _FocusSessionPageState();
 }
 
-class _FocusSessionPageState extends ConsumerState<FocusSessionPage>
+class _FocusSessionPageState extends State<FocusSessionPage>
     with WidgetsBindingObserver {
   static const int _totalSeconds = 25 * 60;
   int _remainingSeconds = _totalSeconds;
@@ -66,7 +66,7 @@ class _FocusSessionPageState extends ConsumerState<FocusSessionPage>
       wasInterrupted: interrupted,
       isCompleted: !interrupted,
     );
-    ref.read(tasksProvider.notifier).updateTask(updatedTask);
+    context.read<TaskProvider>().updateTask(updatedTask);
   }
 
   void _startTimer() {

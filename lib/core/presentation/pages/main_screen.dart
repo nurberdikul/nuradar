@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 
 import '../../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../../features/map_spots/presentation/pages/map_page.dart';
@@ -8,25 +9,22 @@ import '../../../features/tasks/presentation/pages/task_list_page.dart';
 import '../../theme/app_theme.dart';
 import '../../../features/tasks/presentation/providers/task_provider.dart';
 
-class NavigationIndexNotifier extends Notifier<int> {
-  @override
-  int build() => 0;
+class NavigationProvider extends ChangeNotifier {
+  int _currentIndex = 0;
+  int get currentIndex => _currentIndex;
 
   void updateIndex(int index) {
-    state = index;
+    _currentIndex = index;
+    notifyListeners();
   }
 }
 
-final navigationIndexProvider = NotifierProvider<NavigationIndexNotifier, int>(
-  NavigationIndexNotifier.new,
-);
-
-class MainScreen extends ConsumerWidget {
+class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = ref.watch(navigationIndexProvider);
+  Widget build(BuildContext context) {
+    final currentIndex = context.watch<NavigationProvider>().currentIndex;
 
     final pages = [
       const DashboardPage(),
@@ -40,7 +38,7 @@ class MainScreen extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) {
-          ref.read(navigationIndexProvider.notifier).updateIndex(index);
+          context.read<NavigationProvider>().updateIndex(index);
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppTheme.primaryLight,
@@ -61,7 +59,7 @@ class MainScreen extends ConsumerWidget {
     );
   }
 }
-class ProfileTab extends ConsumerWidget {
+class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
 
   void _showLogoutDialog(BuildContext context) {
@@ -95,8 +93,11 @@ class ProfileTab extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final tasksAsync = ref.watch(tasksProvider);
+  Widget build(BuildContext context) {
+    final taskProvider = context.watch<TaskProvider>();
+    final tasks = taskProvider.tasks;
+    final isLoading = taskProvider.isLoading;
+    final error = taskProvider.error;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -129,69 +130,120 @@ class ProfileTab extends ConsumerWidget {
             const SizedBox(height: 40),
 
             // Focus Insights
-            tasksAsync.when(
-              data: (tasks) {
-                final sessions = tasks.where((t) => t.totalFocusTime > 0).toList();
+            if (isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (error != null)
+              const Text('Ошибка загрузки статистики')
+            else
+              Builder(
+                builder: (context) {
+                  final sessions = tasks.where((t) => t.totalFocusTime > 0).toList();
 
-                int totalPlanned = 0;
-                int totalActual = 0;
-                int interruptions = 0;
-                for (final task in sessions) {
-                  totalPlanned += task.totalFocusTime;
-                  totalActual += task.actualFocusTime;
-                  if (task.wasInterrupted) interruptions++;
-                }
+                  int totalPlanned = 0;
+                  int totalActual = 0;
+                  int interruptions = 0;
+                  for (final task in sessions) {
+                    totalPlanned += task.totalFocusTime;
+                    totalActual += task.actualFocusTime;
+                    if (task.wasInterrupted) interruptions++;
+                  }
 
-                final focusIndex = totalPlanned > 0 ? (totalActual / totalPlanned * 100).round() : 0;
+                  final focusIndex = totalPlanned > 0 ? (totalActual / totalPlanned * 100).round() : 0;
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Focus Insights',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 16),
-                    GridView.count(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                      childAspectRatio: 1.5,
-                      children: [
-                        _StatCard(
-                          title: 'Индекс Фокуса',
-                          value: '$focusIndex%',
-                          color: focusIndex >= 50 ? AppTheme.successColor : AppTheme.errorColor,
-                          icon: Icons.speed,
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Focus Insights',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 16),
+                      GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                        childAspectRatio: 1.5,
+                        children: [
+                          _StatCard(
+                            title: 'Индекс Фокуса',
+                            value: '$focusIndex%',
+                            color: focusIndex >= 50 ? AppTheme.successColor : AppTheme.errorColor,
+                            icon: Icons.speed,
+                          ),
+                          _StatCard(
+                            title: 'Минуты успеха',
+                            value: '${totalActual ~/ 60}',
+                            color: AppTheme.primaryColor,
+                            icon: Icons.timer,
+                          ),
+                          _StatCard(
+                            title: 'Срывы',
+                            value: '$interruptions',
+                            color: Colors.orange,
+                            icon: Icons.warning_amber_rounded,
+                          ),
+                          _StatCard(
+                            title: 'Всего сессий',
+                            value: '${sessions.length}',
+                            color: Colors.blue,
+                            icon: Icons.history,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Активность за 7 дней',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        height: 200,
+                        child: BarChart(
+                          BarChartData(
+                            alignment: BarChartAlignment.spaceAround,
+                            maxY: 120,
+                            barTouchData: BarTouchData(enabled: false),
+                            titlesData: FlTitlesData(
+                              show: true,
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  getTitlesWidget: (value, meta) {
+                                    const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+                                    return Text(days[value.toInt() % 7], style: const TextStyle(fontSize: 10));
+                                  },
+                                ),
+                              ),
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 30,
+                                  getTitlesWidget: (value, meta) => Text('${value.toInt()}м', style: const TextStyle(fontSize: 10)),
+                                ),
+                              ),
+                              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                            ),
+                            gridData: const FlGridData(show: false),
+                            borderData: FlBorderData(show: false),
+                            barGroups: [
+                              BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 30, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
+                              BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 50, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
+                              BarChartGroupData(x: 2, barRods: [BarChartRodData(toY: 20, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
+                              BarChartGroupData(x: 3, barRods: [BarChartRodData(toY: 80, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
+                              BarChartGroupData(x: 4, barRods: [BarChartRodData(toY: 100, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
+                              BarChartGroupData(x: 5, barRods: [BarChartRodData(toY: 10, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
+                              BarChartGroupData(x: 6, barRods: [BarChartRodData(toY: 60, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
+                            ],
+                          ),
                         ),
-                        _StatCard(
-                          title: 'Минуты успеха',
-                          value: '${totalActual ~/ 60}',
-                          color: AppTheme.primaryColor,
-                          icon: Icons.timer,
-                        ),
-                        _StatCard(
-                          title: 'Срывы',
-                          value: '$interruptions',
-                          color: Colors.orange,
-                          icon: Icons.warning_amber_rounded,
-                        ),
-                        _StatCard(
-                          title: 'Всего сессий',
-                          value: '${sessions.length}',
-                          color: Colors.blue,
-                          icon: Icons.history,
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, _) => const Text('Ошибка загрузки статистики'),
-            ),
+                      ),
+                    ],
+                  );
+                },
+              ),
 
             const SizedBox(height: 48),
 

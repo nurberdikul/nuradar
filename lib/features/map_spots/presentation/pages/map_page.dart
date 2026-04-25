@@ -1,31 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../providers/map_provider.dart';
 
-class MapPage extends ConsumerWidget {
+class MapPage extends StatelessWidget {
   const MapPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final positionAsync = ref.watch(mapProvider);
+  Widget build(BuildContext context) {
+    final mapProvider = context.watch<MapProvider>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Радар мест')),
-      body: positionAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Ошибка получения геоданных:\n$err',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ),
-        data: (position) {
+      body: Builder(
+        builder: (context) {
+          if (mapProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (mapProvider.error != null) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Ошибка получения геоданных:\n${mapProvider.error}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            );
+          }
+
+          final position = mapProvider.position;
+          if (position == null) return const SizedBox.shrink();
+
           return GoogleMap(
             initialCameraPosition: CameraPosition(
               target: LatLng(position.latitude, position.longitude),

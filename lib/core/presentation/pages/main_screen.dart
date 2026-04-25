@@ -145,10 +145,24 @@ class ProfileTab extends StatelessWidget {
                   for (final task in sessions) {
                     totalPlanned += task.totalFocusTime;
                     totalActual += task.actualFocusTime;
-                    if (task.wasInterrupted) interruptions++;
+                    interruptions += task.interruptions;
                   }
 
                   final focusIndex = totalPlanned > 0 ? (totalActual / totalPlanned * 100).round() : 0;
+                  
+                  final today = DateTime.now();
+                  final List<double> weeklyStats = List.filled(7, 0.0);
+                  double maxStat = 0;
+                  for (final task in sessions) {
+                    final difference = today.difference(task.dueDate).inDays;
+                    if (difference >= 0 && difference < 7) {
+                      final index = 6 - difference;
+                      weeklyStats[index] += task.actualFocusTime / 60.0;
+                      if (weeklyStats[index] > maxStat) {
+                        maxStat = weeklyStats[index];
+                      }
+                    }
+                  }
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +217,7 @@ class ProfileTab extends StatelessWidget {
                         child: BarChart(
                           BarChartData(
                             alignment: BarChartAlignment.spaceAround,
-                            maxY: 120,
+                            maxY: maxStat == 0 ? 10 : maxStat * 1.2,
                             barTouchData: BarTouchData(enabled: false),
                             titlesData: FlTitlesData(
                               show: true,
@@ -211,8 +225,9 @@ class ProfileTab extends StatelessWidget {
                                 sideTitles: SideTitles(
                                   showTitles: true,
                                   getTitlesWidget: (value, meta) {
+                                    final date = today.subtract(Duration(days: 6 - value.toInt()));
                                     const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-                                    return Text(days[value.toInt() % 7], style: const TextStyle(fontSize: 10));
+                                    return Text(days[date.weekday - 1], style: const TextStyle(fontSize: 10));
                                   },
                                 ),
                               ),
@@ -228,15 +243,19 @@ class ProfileTab extends StatelessWidget {
                             ),
                             gridData: const FlGridData(show: false),
                             borderData: FlBorderData(show: false),
-                            barGroups: [
-                              BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 30, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
-                              BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 50, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
-                              BarChartGroupData(x: 2, barRods: [BarChartRodData(toY: 20, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
-                              BarChartGroupData(x: 3, barRods: [BarChartRodData(toY: 80, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
-                              BarChartGroupData(x: 4, barRods: [BarChartRodData(toY: 100, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
-                              BarChartGroupData(x: 5, barRods: [BarChartRodData(toY: 10, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
-                              BarChartGroupData(x: 6, barRods: [BarChartRodData(toY: 60, color: AppTheme.primaryLight, width: 12, borderRadius: BorderRadius.circular(4))]),
-                            ],
+                            barGroups: List.generate(7, (index) {
+                              return BarChartGroupData(
+                                x: index,
+                                barRods: [
+                                  BarChartRodData(
+                                    toY: weeklyStats[index],
+                                    color: AppTheme.primaryLight,
+                                    width: 12,
+                                    borderRadius: BorderRadius.circular(4),
+                                  )
+                                ],
+                              );
+                            }),
                           ),
                         ),
                       ),

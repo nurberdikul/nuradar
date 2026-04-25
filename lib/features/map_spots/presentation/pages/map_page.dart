@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../providers/map_provider.dart';
 
-class MapPage extends StatelessWidget {
-  const MapPage({super.key});
+class MapPage extends StatefulWidget {
+  final bool isPicker;
+
+  const MapPage({super.key, this.isPicker = false});
+
+  @override
+  State<MapPage> createState() => _MapPageState();
+}
+
+class _MapPageState extends State<MapPage> {
+  LatLng? _selectedLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -34,46 +44,75 @@ class MapPage extends StatelessWidget {
           final position = mapProvider.position;
           if (position == null) return const SizedBox.shrink();
 
-          return GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: LatLng(position.latitude, position.longitude),
-              zoom: 16.0,
+          return FlutterMap(
+            options: MapOptions(
+              initialCenter: LatLng(position.latitude, position.longitude),
+              initialZoom: 16.0,
+              onTap: (tapPosition, point) {
+                setState(() {
+                  _selectedLocation = point;
+                });
+              },
             ),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
-            markers: _getMockMarkers(),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.example.focus_buddy',
+              ),
+              MarkerLayer(
+                markers: [
+                  ..._getMockMarkers(),
+                  Marker(
+                    point: LatLng(position.latitude, position.longitude),
+                    width: 40,
+                    height: 40,
+                    child: const Icon(Icons.my_location, color: Colors.blue, size: 30),
+                  ),
+                  if (_selectedLocation != null)
+                    Marker(
+                      point: _selectedLocation!,
+                      width: 40,
+                      height: 40,
+                      child: const Icon(Icons.location_pin, color: Colors.green, size: 40),
+                    ),
+                ],
+              ),
+            ],
           );
         },
       ),
+      floatingActionButton: widget.isPicker && _selectedLocation != null
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.pop(context, _selectedLocation);
+              },
+              label: const Text('Выбрать эту локацию'),
+              icon: const Icon(Icons.check),
+            )
+          : null,
     );
   }
 
-  Set<Marker> _getMockMarkers() {
-    return {
+  List<Marker> _getMockMarkers() {
+    return [
       const Marker(
-        markerId: MarkerId('sdu_library'),
-        position: LatLng(43.2078, 76.6698),
-        infoWindow: InfoWindow(
-          title: 'Тихая зона библиотеки SDU',
-          snippet: 'Идеально для фокусировки',
-        ),
+        point: LatLng(43.2078, 76.6698),
+        width: 40,
+        height: 40,
+        child: Icon(Icons.location_on, color: Colors.red, size: 40),
       ),
       const Marker(
-        markerId: MarkerId('class_204a'),
-        position: LatLng(43.2081, 76.6692),
-        infoWindow: InfoWindow(
-          title: 'Свободная аудитория 204-A',
-          snippet: 'Много розеток и тишина',
-        ),
+        point: LatLng(43.2081, 76.6692),
+        width: 40,
+        height: 40,
+        child: Icon(Icons.location_on, color: Colors.red, size: 40),
       ),
       const Marker(
-        markerId: MarkerId('bean_there'),
-        position: LatLng(43.2075, 76.6705),
-        infoWindow: InfoWindow(
-          title: 'Кофейня Bean There',
-          snippet: 'Вкусный кофе и быстрый Wi-Fi',
-        ),
+        point: LatLng(43.2075, 76.6705),
+        width: 40,
+        height: 40,
+        child: Icon(Icons.location_on, color: Colors.red, size: 40),
       ),
-    };
+    ];
   }
 }

@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ocr_service.dart';
+import '../../../map_spots/presentation/pages/map_page.dart';
 import '../../domain/entities/task_entity.dart';
 import '../../domain/entities/task_priority.dart';
 import '../providers/task_provider.dart';
@@ -31,6 +31,8 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
   double? _lat;
   double? _lng;
   TaskPriority _selectedPriority = TaskPriority.medium;
+  int _selectedDuration = 25;
+  final List<int> _durations = [15, 25, 50, 90];
   final _ocrService = OCRService();
 
   @override
@@ -70,24 +72,18 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
   }
 
   Future<void> _attachLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MapPage(isPicker: true),
+      ),
+    );
+    if (result != null) {
+      setState(() {
+        _lat = result.latitude;
+        _lng = result.longitude;
+      });
     }
-    if (permission == LocationPermission.deniedForever) return;
-
-    final position = await Geolocator.getCurrentPosition();
-    setState(() {
-      _lat = position.latitude;
-      _lng = position.longitude;
-    });
   }
 
   void _addMilestone() {
@@ -130,6 +126,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
       recognizedText: _recognizedText,
       latitude: _lat,
       longitude: _lng,
+      plannedDuration: _selectedDuration,
       userId: FirebaseAuth.instance.currentUser?.uid,
     );
 
@@ -219,6 +216,43 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                     priority,
                   ).withValues(alpha: 0.3),
                   checkmarkColor: _getPriorityColor(priority),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 16),
+          // Duration Section
+          Text(
+            'Время фокуса',
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: _durations.map((duration) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ChoiceChip(
+                  label: Text(
+                    '$duration мин',
+                    style: TextStyle(
+                      color: _selectedDuration == duration
+                          ? AppTheme.primaryLight
+                          : Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  selected: _selectedDuration == duration,
+                  onSelected: (selected) {
+                    if (selected) {
+                      setState(() {
+                        _selectedDuration = duration;
+                      });
+                    }
+                  },
+                  selectedColor: AppTheme.primaryLight.withValues(alpha: 0.2),
+                  checkmarkColor: AppTheme.primaryLight,
                 ),
               );
             }).toList(),

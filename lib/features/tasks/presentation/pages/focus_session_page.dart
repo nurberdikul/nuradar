@@ -16,13 +16,15 @@ class FocusSessionPage extends StatefulWidget {
 
 class _FocusSessionPageState extends State<FocusSessionPage>
     with WidgetsBindingObserver {
-  static const int _totalSeconds = 25 * 60;
-  int _remainingSeconds = _totalSeconds;
+  late final int _totalSeconds;
+  late int _remainingSeconds;
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    _totalSeconds = widget.task.plannedDuration * 60;
+    _remainingSeconds = _totalSeconds;
     WidgetsBinding.instance.addObserver(this);
     _startTimer();
   }
@@ -61,10 +63,10 @@ class _FocusSessionPageState extends State<FocusSessionPage>
   void _saveSessionStats({required bool interrupted}) {
     final actualTime = _totalSeconds - _remainingSeconds;
     final updatedTask = widget.task.copyWith(
-      actualFocusTime: actualTime,
-      totalFocusTime: _totalSeconds,
-      wasInterrupted: interrupted,
-      isCompleted: !interrupted,
+      actualFocusTime: widget.task.actualFocusTime + actualTime,
+      totalFocusTime: widget.task.totalFocusTime + _totalSeconds,
+      interruptions: widget.task.interruptions + (interrupted ? 1 : 0),
+      isCompleted: interrupted ? widget.task.isCompleted : true,
     );
     context.read<TaskProvider>().updateTask(updatedTask);
   }

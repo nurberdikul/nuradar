@@ -277,7 +277,7 @@ as bool,
 /// @nodoc
 mixin _$TaskEntity {
 
- String get id; String get title; String get description; DateTime get dueDate; TaskPriority get priority; bool get isCompleted; List<String> get imageUrls; List<Milestone> get milestones; int get totalFocusTime; int get actualFocusTime; bool get wasInterrupted; String? get recognizedText; String? get category; double? get latitude; double? get longitude; String? get userId;
+ String get id; String get title; String get description; DateTime get dueDate; TaskPriority get priority; bool get isCompleted; List<String> get imageUrls; List<Milestone> get milestones; int get totalFocusTime; int get actualFocusTime; int get interruptions; int get plannedDuration; String? get recognizedText; String? get category; double? get latitude; double? get longitude; String? get userId;
 /// Create a copy of TaskEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -288,16 +288,16 @@ $TaskEntityCopyWith<TaskEntity> get copyWith => _$TaskEntityCopyWithImpl<TaskEnt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other.imageUrls, imageUrls)&&const DeepCollectionEquality().equals(other.milestones, milestones)&&(identical(other.totalFocusTime, totalFocusTime) || other.totalFocusTime == totalFocusTime)&&(identical(other.actualFocusTime, actualFocusTime) || other.actualFocusTime == actualFocusTime)&&(identical(other.wasInterrupted, wasInterrupted) || other.wasInterrupted == wasInterrupted)&&(identical(other.recognizedText, recognizedText) || other.recognizedText == recognizedText)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other.imageUrls, imageUrls)&&const DeepCollectionEquality().equals(other.milestones, milestones)&&(identical(other.totalFocusTime, totalFocusTime) || other.totalFocusTime == totalFocusTime)&&(identical(other.actualFocusTime, actualFocusTime) || other.actualFocusTime == actualFocusTime)&&(identical(other.interruptions, interruptions) || other.interruptions == interruptions)&&(identical(other.plannedDuration, plannedDuration) || other.plannedDuration == plannedDuration)&&(identical(other.recognizedText, recognizedText) || other.recognizedText == recognizedText)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.userId, userId) || other.userId == userId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,priority,isCompleted,const DeepCollectionEquality().hash(imageUrls),const DeepCollectionEquality().hash(milestones),totalFocusTime,actualFocusTime,wasInterrupted,recognizedText,category,latitude,longitude,userId);
+int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,priority,isCompleted,const DeepCollectionEquality().hash(imageUrls),const DeepCollectionEquality().hash(milestones),totalFocusTime,actualFocusTime,interruptions,plannedDuration,recognizedText,category,latitude,longitude,userId);
 
 @override
 String toString() {
-  return 'TaskEntity(id: $id, title: $title, description: $description, dueDate: $dueDate, priority: $priority, isCompleted: $isCompleted, imageUrls: $imageUrls, milestones: $milestones, totalFocusTime: $totalFocusTime, actualFocusTime: $actualFocusTime, wasInterrupted: $wasInterrupted, recognizedText: $recognizedText, category: $category, latitude: $latitude, longitude: $longitude, userId: $userId)';
+  return 'TaskEntity(id: $id, title: $title, description: $description, dueDate: $dueDate, priority: $priority, isCompleted: $isCompleted, imageUrls: $imageUrls, milestones: $milestones, totalFocusTime: $totalFocusTime, actualFocusTime: $actualFocusTime, interruptions: $interruptions, plannedDuration: $plannedDuration, recognizedText: $recognizedText, category: $category, latitude: $latitude, longitude: $longitude, userId: $userId)';
 }
 
 
@@ -308,7 +308,7 @@ abstract mixin class $TaskEntityCopyWith<$Res>  {
   factory $TaskEntityCopyWith(TaskEntity value, $Res Function(TaskEntity) _then) = _$TaskEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String description, DateTime dueDate, TaskPriority priority, bool isCompleted, List<String> imageUrls, List<Milestone> milestones, int totalFocusTime, int actualFocusTime, bool wasInterrupted, String? recognizedText, String? category, double? latitude, double? longitude, String? userId
+ String id, String title, String description, DateTime dueDate, TaskPriority priority, bool isCompleted, List<String> imageUrls, List<Milestone> milestones, int totalFocusTime, int actualFocusTime, int interruptions, int plannedDuration, String? recognizedText, String? category, double? latitude, double? longitude, String? userId
 });
 
 
@@ -325,7 +325,7 @@ class _$TaskEntityCopyWithImpl<$Res>
 
 /// Create a copy of TaskEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? priority = null,Object? isCompleted = null,Object? imageUrls = null,Object? milestones = null,Object? totalFocusTime = null,Object? actualFocusTime = null,Object? wasInterrupted = null,Object? recognizedText = freezed,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? userId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? priority = null,Object? isCompleted = null,Object? imageUrls = null,Object? milestones = null,Object? totalFocusTime = null,Object? actualFocusTime = null,Object? interruptions = null,Object? plannedDuration = null,Object? recognizedText = freezed,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? userId = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -337,8 +337,9 @@ as bool,imageUrls: null == imageUrls ? _self.imageUrls : imageUrls // ignore: ca
 as List<String>,milestones: null == milestones ? _self.milestones : milestones // ignore: cast_nullable_to_non_nullable
 as List<Milestone>,totalFocusTime: null == totalFocusTime ? _self.totalFocusTime : totalFocusTime // ignore: cast_nullable_to_non_nullable
 as int,actualFocusTime: null == actualFocusTime ? _self.actualFocusTime : actualFocusTime // ignore: cast_nullable_to_non_nullable
-as int,wasInterrupted: null == wasInterrupted ? _self.wasInterrupted : wasInterrupted // ignore: cast_nullable_to_non_nullable
-as bool,recognizedText: freezed == recognizedText ? _self.recognizedText : recognizedText // ignore: cast_nullable_to_non_nullable
+as int,interruptions: null == interruptions ? _self.interruptions : interruptions // ignore: cast_nullable_to_non_nullable
+as int,plannedDuration: null == plannedDuration ? _self.plannedDuration : plannedDuration // ignore: cast_nullable_to_non_nullable
+as int,recognizedText: freezed == recognizedText ? _self.recognizedText : recognizedText // ignore: cast_nullable_to_non_nullable
 as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
@@ -428,10 +429,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  List<Milestone> milestones,  int totalFocusTime,  int actualFocusTime,  bool wasInterrupted,  String? recognizedText,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  List<Milestone> milestones,  int totalFocusTime,  int actualFocusTime,  int interruptions,  int plannedDuration,  String? recognizedText,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TaskEntity() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.milestones,_that.totalFocusTime,_that.actualFocusTime,_that.wasInterrupted,_that.recognizedText,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
+return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.milestones,_that.totalFocusTime,_that.actualFocusTime,_that.interruptions,_that.plannedDuration,_that.recognizedText,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
   return orElse();
 
 }
@@ -449,10 +450,10 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.prior
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  List<Milestone> milestones,  int totalFocusTime,  int actualFocusTime,  bool wasInterrupted,  String? recognizedText,  String? category,  double? latitude,  double? longitude,  String? userId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  List<Milestone> milestones,  int totalFocusTime,  int actualFocusTime,  int interruptions,  int plannedDuration,  String? recognizedText,  String? category,  double? latitude,  double? longitude,  String? userId)  $default,) {final _that = this;
 switch (_that) {
 case _TaskEntity():
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.milestones,_that.totalFocusTime,_that.actualFocusTime,_that.wasInterrupted,_that.recognizedText,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
+return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.milestones,_that.totalFocusTime,_that.actualFocusTime,_that.interruptions,_that.plannedDuration,_that.recognizedText,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -469,10 +470,10 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.prior
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  List<Milestone> milestones,  int totalFocusTime,  int actualFocusTime,  bool wasInterrupted,  String? recognizedText,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  List<Milestone> milestones,  int totalFocusTime,  int actualFocusTime,  int interruptions,  int plannedDuration,  String? recognizedText,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,) {final _that = this;
 switch (_that) {
 case _TaskEntity() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.milestones,_that.totalFocusTime,_that.actualFocusTime,_that.wasInterrupted,_that.recognizedText,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
+return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.milestones,_that.totalFocusTime,_that.actualFocusTime,_that.interruptions,_that.plannedDuration,_that.recognizedText,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
   return null;
 
 }
@@ -484,7 +485,7 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.prior
 
 
 class _TaskEntity extends TaskEntity {
-  const _TaskEntity({required this.id, required this.title, required this.description, required this.dueDate, this.priority = TaskPriority.medium, this.isCompleted = false, final  List<String> imageUrls = const [], final  List<Milestone> milestones = const [], this.totalFocusTime = 0, this.actualFocusTime = 0, this.wasInterrupted = false, this.recognizedText, this.category, this.latitude, this.longitude, this.userId}): _imageUrls = imageUrls,_milestones = milestones,super._();
+  const _TaskEntity({required this.id, required this.title, required this.description, required this.dueDate, this.priority = TaskPriority.medium, this.isCompleted = false, final  List<String> imageUrls = const [], final  List<Milestone> milestones = const [], this.totalFocusTime = 0, this.actualFocusTime = 0, this.interruptions = 0, this.plannedDuration = 25, this.recognizedText, this.category, this.latitude, this.longitude, this.userId}): _imageUrls = imageUrls,_milestones = milestones,super._();
   
 
 @override final  String id;
@@ -509,7 +510,8 @@ class _TaskEntity extends TaskEntity {
 
 @override@JsonKey() final  int totalFocusTime;
 @override@JsonKey() final  int actualFocusTime;
-@override@JsonKey() final  bool wasInterrupted;
+@override@JsonKey() final  int interruptions;
+@override@JsonKey() final  int plannedDuration;
 @override final  String? recognizedText;
 @override final  String? category;
 @override final  double? latitude;
@@ -526,16 +528,16 @@ _$TaskEntityCopyWith<_TaskEntity> get copyWith => __$TaskEntityCopyWithImpl<_Tas
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other._imageUrls, _imageUrls)&&const DeepCollectionEquality().equals(other._milestones, _milestones)&&(identical(other.totalFocusTime, totalFocusTime) || other.totalFocusTime == totalFocusTime)&&(identical(other.actualFocusTime, actualFocusTime) || other.actualFocusTime == actualFocusTime)&&(identical(other.wasInterrupted, wasInterrupted) || other.wasInterrupted == wasInterrupted)&&(identical(other.recognizedText, recognizedText) || other.recognizedText == recognizedText)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&const DeepCollectionEquality().equals(other._imageUrls, _imageUrls)&&const DeepCollectionEquality().equals(other._milestones, _milestones)&&(identical(other.totalFocusTime, totalFocusTime) || other.totalFocusTime == totalFocusTime)&&(identical(other.actualFocusTime, actualFocusTime) || other.actualFocusTime == actualFocusTime)&&(identical(other.interruptions, interruptions) || other.interruptions == interruptions)&&(identical(other.plannedDuration, plannedDuration) || other.plannedDuration == plannedDuration)&&(identical(other.recognizedText, recognizedText) || other.recognizedText == recognizedText)&&(identical(other.category, category) || other.category == category)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.userId, userId) || other.userId == userId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,priority,isCompleted,const DeepCollectionEquality().hash(_imageUrls),const DeepCollectionEquality().hash(_milestones),totalFocusTime,actualFocusTime,wasInterrupted,recognizedText,category,latitude,longitude,userId);
+int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,priority,isCompleted,const DeepCollectionEquality().hash(_imageUrls),const DeepCollectionEquality().hash(_milestones),totalFocusTime,actualFocusTime,interruptions,plannedDuration,recognizedText,category,latitude,longitude,userId);
 
 @override
 String toString() {
-  return 'TaskEntity(id: $id, title: $title, description: $description, dueDate: $dueDate, priority: $priority, isCompleted: $isCompleted, imageUrls: $imageUrls, milestones: $milestones, totalFocusTime: $totalFocusTime, actualFocusTime: $actualFocusTime, wasInterrupted: $wasInterrupted, recognizedText: $recognizedText, category: $category, latitude: $latitude, longitude: $longitude, userId: $userId)';
+  return 'TaskEntity(id: $id, title: $title, description: $description, dueDate: $dueDate, priority: $priority, isCompleted: $isCompleted, imageUrls: $imageUrls, milestones: $milestones, totalFocusTime: $totalFocusTime, actualFocusTime: $actualFocusTime, interruptions: $interruptions, plannedDuration: $plannedDuration, recognizedText: $recognizedText, category: $category, latitude: $latitude, longitude: $longitude, userId: $userId)';
 }
 
 
@@ -546,7 +548,7 @@ abstract mixin class _$TaskEntityCopyWith<$Res> implements $TaskEntityCopyWith<$
   factory _$TaskEntityCopyWith(_TaskEntity value, $Res Function(_TaskEntity) _then) = __$TaskEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String description, DateTime dueDate, TaskPriority priority, bool isCompleted, List<String> imageUrls, List<Milestone> milestones, int totalFocusTime, int actualFocusTime, bool wasInterrupted, String? recognizedText, String? category, double? latitude, double? longitude, String? userId
+ String id, String title, String description, DateTime dueDate, TaskPriority priority, bool isCompleted, List<String> imageUrls, List<Milestone> milestones, int totalFocusTime, int actualFocusTime, int interruptions, int plannedDuration, String? recognizedText, String? category, double? latitude, double? longitude, String? userId
 });
 
 
@@ -563,7 +565,7 @@ class __$TaskEntityCopyWithImpl<$Res>
 
 /// Create a copy of TaskEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? priority = null,Object? isCompleted = null,Object? imageUrls = null,Object? milestones = null,Object? totalFocusTime = null,Object? actualFocusTime = null,Object? wasInterrupted = null,Object? recognizedText = freezed,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? userId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? priority = null,Object? isCompleted = null,Object? imageUrls = null,Object? milestones = null,Object? totalFocusTime = null,Object? actualFocusTime = null,Object? interruptions = null,Object? plannedDuration = null,Object? recognizedText = freezed,Object? category = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? userId = freezed,}) {
   return _then(_TaskEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -575,8 +577,9 @@ as bool,imageUrls: null == imageUrls ? _self._imageUrls : imageUrls // ignore: c
 as List<String>,milestones: null == milestones ? _self._milestones : milestones // ignore: cast_nullable_to_non_nullable
 as List<Milestone>,totalFocusTime: null == totalFocusTime ? _self.totalFocusTime : totalFocusTime // ignore: cast_nullable_to_non_nullable
 as int,actualFocusTime: null == actualFocusTime ? _self.actualFocusTime : actualFocusTime // ignore: cast_nullable_to_non_nullable
-as int,wasInterrupted: null == wasInterrupted ? _self.wasInterrupted : wasInterrupted // ignore: cast_nullable_to_non_nullable
-as bool,recognizedText: freezed == recognizedText ? _self.recognizedText : recognizedText // ignore: cast_nullable_to_non_nullable
+as int,interruptions: null == interruptions ? _self.interruptions : interruptions // ignore: cast_nullable_to_non_nullable
+as int,plannedDuration: null == plannedDuration ? _self.plannedDuration : plannedDuration // ignore: cast_nullable_to_non_nullable
+as int,recognizedText: freezed == recognizedText ? _self.recognizedText : recognizedText // ignore: cast_nullable_to_non_nullable
 as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable

@@ -1,16 +1,33 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
+import 'package:flutter/material.dart';
 import '../../data/weather_service.dart';
 
-part 'dashboard_providers.g.dart';
+class DashboardProvider extends ChangeNotifier {
+  final WeatherService _weatherService = WeatherService();
+  
+  String? _weather;
+  bool _isLoadingWeather = true;
+  String? _weatherError;
 
-@riverpod
-WeatherService weatherService(Ref ref) {
-  return WeatherService();
-}
+  String? get weather => _weather;
+  bool get isLoadingWeather => _isLoadingWeather;
+  String? get weatherError => _weatherError;
 
-@riverpod
-Future<String> weather(Ref ref) async {
-  final service = ref.watch(weatherServiceProvider);
-  return service.getCurrentWeather();
+  DashboardProvider() {
+    loadWeather();
+  }
+
+  Future<void> loadWeather() async {
+    _isLoadingWeather = true;
+    _weatherError = null;
+    notifyListeners();
+
+    try {
+      _weather = await _weatherService.getCurrentWeather();
+    } catch (e) {
+      _weatherError = e.toString();
+    } finally {
+      _isLoadingWeather = false;
+      notifyListeners();
+    }
+  }
 }

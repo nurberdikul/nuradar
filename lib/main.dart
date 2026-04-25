@@ -2,13 +2,16 @@ import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 
 import 'core/presentation/pages/main_screen.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
+import 'features/tasks/presentation/providers/task_provider.dart';
+import 'features/map_spots/presentation/providers/map_provider.dart';
+import 'features/dashboard/presentation/providers/dashboard_providers.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -33,33 +36,37 @@ void main() async {
     );
   }
 
-  runApp(const ProviderScope(child: FocusBuddyApp()));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => TaskProvider()),
+        ChangeNotifierProvider(create: (_) => MapProvider()),
+        ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => NavigationProvider()),
+      ],
+      child: const FocusBuddyApp(),
+    ),
+  );
 }
 
-class FocusBuddyApp extends ConsumerWidget {
+class FocusBuddyApp extends StatelessWidget {
   const FocusBuddyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authProvider);
+  Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
 
     return MaterialApp(
       title: 'nuradar',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      home: authState.when(
-        data: (user) {
-          if (user != null) {
-            return const MainScreen();
-          }
-          return const LoginPage();
-        },
-        loading: () =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
-        error: (err, stack) =>
-            Scaffold(body: Center(child: Text('Ошибка авторизации: $err'))),
-      ),
+      home: authProvider.isLoading
+          ? const Scaffold(body: Center(child: CircularProgressIndicator()))
+          : authProvider.user != null
+              ? const MainScreen()
+              : const LoginPage(),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
@@ -12,14 +12,15 @@ import '../../domain/entities/task_entity.dart';
 import '../../domain/entities/task_priority.dart';
 import '../providers/task_provider.dart';
 
-class CreateTaskSheet extends ConsumerStatefulWidget {
+class CreateTaskSheet extends StatefulWidget {
   const CreateTaskSheet({super.key});
 
   @override
-  ConsumerState<CreateTaskSheet> createState() => _CreateTaskSheetState();
+  State<CreateTaskSheet> createState() => _CreateTaskSheetState();
 }
 
-class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
+class _CreateTaskSheetState extends State<CreateTaskSheet> {
+  final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
   final _milestoneController = TextEditingController();
@@ -106,8 +107,11 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
   }
 
   void _createTask() {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     final title = _titleController.text.trim();
-    if (title.isEmpty) return; // Можно добавить показ ошибки, если нужно
 
     final newTask = TaskEntity(
       id: const Uuid().v4(),
@@ -129,7 +133,7 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
       userId: FirebaseAuth.instance.currentUser?.uid,
     );
 
-    ref.read(tasksProvider.notifier).addTask(newTask);
+    context.read<TaskProvider>().addTask(newTask);
     Navigator.pop(context);
   }
 
@@ -145,24 +149,32 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
         right: 16,
         top: 24,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Создать задачу',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _titleController,
-            decoration: const InputDecoration(
-              labelText: 'Название задачи',
-              border: OutlineInputBorder(),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Создать задачу',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
-          ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _titleController,
+              decoration: const InputDecoration(
+                labelText: 'Название задачи',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Пожалуйста, введите название задачи';
+                }
+                return null;
+              },
+            ),
           const SizedBox(height: 16),
           TextField(
             controller: _descController,
@@ -323,6 +335,7 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
             child: const Text('Создать задачу', style: TextStyle(fontSize: 16)),
           ),
         ],
+      ),
       ),
     );
   }

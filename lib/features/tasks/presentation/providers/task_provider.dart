@@ -1,53 +1,73 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/entities/task_entity.dart';
 import '../../domain/repositories/task_repository.dart';
 import '../../data/repositories/task_repository_impl.dart';
 
-part 'task_provider.g.dart';
+class TaskProvider extends ChangeNotifier {
+  final TaskRepository _repository;
 
-@riverpod
-TaskRepository taskRepository(Ref ref) {
-  return TaskRepositoryImpl(
-    firestore: FirebaseFirestore.instance, // real Firestore instance
-    taskBox: Hive.box('offline_tasks'),
-  );
-}
+  List<TaskEntity> _tasks = [];
+  bool _isLoading = false;
+  String? _error;
 
-@riverpod
-class TasksNotifier extends _$TasksNotifier {
-  @override
-  Future<List<TaskEntity>> build() async {
-    final repository = ref.watch(taskRepositoryProvider);
-    return repository.getTasks();
+  List<TaskEntity> get tasks => _tasks;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+
+  TaskProvider()
+      : _repository = TaskRepositoryImpl(
+          firestore: FirebaseFirestore.instance,
+          taskBox: Hive.box('offline_tasks'),
+        ) {
+    loadTasks();
+  }
+
+  Future<void> loadTasks() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _tasks = await _repository.getTasks();
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> addTask(TaskEntity task) async {
-    final repository = ref.read(taskRepositoryProvider);
-    final currentTasks = state.value ?? [];
-    state = AsyncData([...currentTasks, task]);
+    final currentTasks = List<TaskEntity>.from(_tasks);
+    _tasks.add(task);
+    notifyListeners();
+
     try {
-      await repository.addTask(task);
-    } catch (e, st) {
-      state = AsyncData(currentTasks);
-      state = AsyncError(e, st);
+      await _repository.addTask(task);
+    } catch (e) {
+      _tasks = currentTasks;
+      _error = e.toString();
+      notifyListeners();
     }
   }
 
   Future<void> updateTask(TaskEntity task) async {
-    final repository = ref.read(taskRepositoryProvider);
-    final currentTasks = state.value ?? [];
-    final updatedTasks = currentTasks
-        .map((t) => t.id == task.id ? task : t)
-        .toList();
-    state = AsyncData(updatedTasks);
-    try {
-      await repository.updateTask(task);
-    } catch (e, st) {
-      state = AsyncData(currentTasks);
-      state = AsyncError(e, st);
+    final currentTasks = List<TaskEntity>.from(_tasks);
+    final index = _tasks.indexWhere((t) => t.id == task.id);
+    if (index != -1) {
+      _tasks[index] = task;
+      notifyListeners();
+
+      try {
+        await _repository.updateTask(task);
+      } catch (e) {
+        _tasks = currentTasks;
+        _error = e.toString();
+        notifyListeners();
+      }
     }
   }
 
@@ -57,15 +77,16 @@ class TasksNotifier extends _$TasksNotifier {
   }
 
   Future<void> deleteTask(String id) async {
-    final repository = ref.read(taskRepositoryProvider);
-    final currentTasks = state.value ?? [];
-    final updatedTasks = currentTasks.where((t) => t.id != id).toList();
-    state = AsyncData(updatedTasks);
+    final currentTasks = List<TaskEntity>.from(_tasks);
+    _tasks.removeWhere((t) => t.id == id);
+    notifyListeners();
+
     try {
-      await repository.deleteTask(id);
-    } catch (e, st) {
-      state = AsyncData(currentTasks);
-      state = AsyncError(e, st);
+      await _repository.deleteTask(id);
+    } catch (e) {
+      _tasks = currentTasks;
+      _error = e.toString();
+      notifyListeners();
     }
   }
 }

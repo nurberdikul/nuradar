@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../tasks/presentation/providers/task_provider.dart';
 import '../../../tasks/presentation/widgets/task_card.dart';
+import '../../../tasks/presentation/pages/focus_session_page.dart';
+import '../../../map_spots/presentation/providers/map_provider.dart';
 import '../providers/dashboard_providers.dart';
 
-class DashboardPage extends ConsumerWidget {
+class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
   static const _months = [
@@ -25,15 +27,73 @@ class DashboardPage extends ConsumerWidget {
     'декабря',
   ];
 
+  Future<void> _checkLocation(BuildContext context) async {
+    final mapProvider = context.read<MapProvider>();
+    final taskProvider = context.read<TaskProvider>();
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Проверяем локацию...')),
+    );
+
+    await mapProvider.updateLocation();
+    
+    if (!context.mounted) return;
+    
+    if (mapProvider.error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка локации: ${mapProvider.error}')),
+      );
+      return;
+    }
+
+    final nearbyTask = mapProvider.checkNearbyTasks(taskProvider.tasks);
+    if (nearbyTask != null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: AppTheme.darkBackgroundColor,
+          title: const Text('Зона фокуса рядом!', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          content: Text('Вы рядом с местом выполнения задачи "${nearbyTask.title}". Начать сессию?', style: const TextStyle(color: Colors.white70)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Позже', style: TextStyle(color: Colors.blueAccent)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => FocusSessionPage(task: nearbyTask)));
+              },
+              child: const Text('Начать', style: TextStyle(color: AppTheme.primaryLight)),
+            ),
+          ],
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Рядом нет активных задач с привязанной локацией.')),
+      );
+    }
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final weatherAsyncValue = ref.watch(weatherProvider);
-    final tasksAsyncValue = ref.watch(tasksProvider);
+  Widget build(BuildContext context) {
+    final dashboardProvider = context.watch<DashboardProvider>();
+    final taskProvider = context.watch<TaskProvider>();
     final today = DateTime.now();
     final dateStr = '${today.day} ${_months[today.month - 1]}, ${today.year}';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('nuradar')),
+      appBar: AppBar(
+        title: const Text('nuradar'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.location_searching),
+            tooltip: 'Проверить геозоны',
+            onPressed: () => _checkLocation(context),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -82,13 +142,8 @@ class DashboardPage extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          weatherAsyncValue.when(
-                            data: (temp) => Text(
-                              temp,
-                              style: Theme.of(context).textTheme.headlineSmall
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            loading: () => const Padding(
+                          if (dashboardProvider.isLoadingWeather)
+                            const Padding(
                               padding: EdgeInsets.symmetric(vertical: 4.0),
                               child: SizedBox(
                                 height: 20,
@@ -97,12 +152,18 @@ class DashboardPage extends ConsumerWidget {
                                   strokeWidth: 2,
                                 ),
                               ),
-                            ),
-                            error: (err, stack) => const Text(
+                            )
+                          else if (dashboardProvider.weatherError != null)
+                            const Text(
                               'Ошибка загрузки',
                               style: TextStyle(color: Colors.red),
+                            )
+                          else
+                            Text(
+                              dashboardProvider.weather ?? '',
+                              style: Theme.of(context).textTheme.headlineSmall
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -123,11 +184,16 @@ class DashboardPage extends ConsumerWidget {
 
             // Список задач
             Expanded(
-              child: tasksAsyncValue.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) =>
-                    Center(child: Text('Ошибка загрузки задач: $err')),
-                data: (tasks) {
+              child: Builder(
+                builder: (context) {
+                  if (taskProvider.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (taskProvider.error != null) {
+                    return Center(child: Text('Ошибка загрузки задач: ${taskProvider.error}'));
+                  }
+
+                  final tasks = taskProvider.tasks;
                   // 1. Фильтруем только невыполненные
                   final activeTasks = tasks
                       .where((t) => !t.isCompleted)

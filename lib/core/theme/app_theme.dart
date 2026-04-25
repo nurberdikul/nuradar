@@ -7,7 +7,7 @@ class AppTheme {
   static const Color primaryLight = Color(0xFF818CF8); // Indigo Light
   static const Color successColor = Color(0xFF10B981); // Emerald
   static const Color errorColor = Color(0xFFEF4444); // Red
-  
+
   // Background and Surface Colors
   static const Color lightBackgroundColor = Color(0xFFF9FAFB);
   static const Color darkBackgroundColor = Color(0xFF111827);
@@ -43,9 +43,7 @@ class AppTheme {
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
       ),
@@ -81,9 +79,7 @@ class AppTheme {
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
       ),

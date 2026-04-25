@@ -45,7 +45,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' || e.code == 'invalid-credential' || e.code == 'invalid-email') {
+      if (e.code == 'user-not-found' ||
+          e.code == 'invalid-credential' ||
+          e.code == 'invalid-email') {
         // Если пользователя нет или креды не подошли, пытаемся зарегистрировать
         try {
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -61,9 +63,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         }
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ошибка входа: ${e.message}')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Ошибка входа: ${e.message}')));
         }
       }
     } catch (e) {
@@ -92,19 +94,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(
-                Icons.radar,
-                size: 80,
-                color: AppTheme.primaryColor,
-              ),
+              const Icon(Icons.radar, size: 80, color: AppTheme.primaryColor),
               const SizedBox(height: 24),
               Text(
                 'Добро пожаловать в nuradar',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
               const SizedBox(height: 48),
               TextField(

@@ -15,7 +15,8 @@ abstract class MilestoneModel with _$MilestoneModel {
     @Default(false) bool isDone,
   }) = _MilestoneModel;
 
-  factory MilestoneModel.fromJson(Map<String, dynamic> json) => _$MilestoneModelFromJson(json);
+  factory MilestoneModel.fromJson(Map<String, dynamic> json) =>
+      _$MilestoneModelFromJson(json);
 
   factory MilestoneModel.fromEntity(Milestone entity) {
     return MilestoneModel(
@@ -26,11 +27,7 @@ abstract class MilestoneModel with _$MilestoneModel {
   }
 
   Milestone toEntity() {
-    return Milestone(
-      id: id,
-      title: title,
-      isDone: isDone,
-    );
+    return Milestone(id: id, title: title, isDone: isDone);
   }
 }
 
@@ -50,13 +47,15 @@ abstract class TaskModel with _$TaskModel {
     @Default(0) int totalFocusTime,
     @Default(0) int actualFocusTime,
     @Default(false) bool wasInterrupted,
+    String? recognizedText,
     String? category,
     double? latitude,
     double? longitude,
     String? userId,
   }) = _TaskModel;
 
-  factory TaskModel.fromJson(Map<String, dynamic> json) => _$TaskModelFromJson(json);
+  factory TaskModel.fromJson(Map<String, dynamic> json) =>
+      _$TaskModelFromJson(json);
 
   factory TaskModel.fromEntity(TaskEntity entity) {
     return TaskModel(
@@ -67,10 +66,13 @@ abstract class TaskModel with _$TaskModel {
       priority: entity.priority,
       isCompleted: entity.isCompleted,
       imageUrls: entity.imageUrls,
-      milestones: entity.milestones.map((m) => MilestoneModel.fromEntity(m)).toList(),
+      milestones: entity.milestones
+          .map((m) => MilestoneModel.fromEntity(m))
+          .toList(),
       totalFocusTime: entity.totalFocusTime,
       actualFocusTime: entity.actualFocusTime,
       wasInterrupted: entity.wasInterrupted,
+      recognizedText: entity.recognizedText,
       category: entity.category,
       latitude: entity.latitude,
       longitude: entity.longitude,
@@ -91,6 +93,7 @@ abstract class TaskModel with _$TaskModel {
       totalFocusTime: totalFocusTime,
       actualFocusTime: actualFocusTime,
       wasInterrupted: wasInterrupted,
+      recognizedText: recognizedText,
       category: category,
       latitude: latitude,
       longitude: longitude,

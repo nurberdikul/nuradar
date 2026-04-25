@@ -9,17 +9,12 @@ import '../../domain/entities/task_entity.dart';
 class TaskDetailPage extends StatelessWidget {
   final TaskEntity task;
 
-  const TaskDetailPage({
-    super.key,
-    required this.task,
-  });
+  const TaskDetailPage({super.key, required this.task});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Детали задачи'),
-      ),
+      appBar: AppBar(title: const Text('Детали задачи')),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -44,14 +39,16 @@ class TaskDetailPage extends StatelessWidget {
                   Text(
                     task.title,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   if (task.category != null)
                     Chip(
                       label: Text(task.category!),
-                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
                       side: BorderSide.none,
                     ),
                   const SizedBox(height: 16),
@@ -83,13 +80,19 @@ class TaskDetailPage extends StatelessWidget {
                               )
                             : GoogleMap(
                                 initialCameraPosition: CameraPosition(
-                                  target: LatLng(task.latitude!, task.longitude!),
+                                  target: LatLng(
+                                    task.latitude!,
+                                    task.longitude!,
+                                  ),
                                   zoom: 15,
                                 ),
                                 markers: {
                                   Marker(
                                     markerId: MarkerId(task.id),
-                                    position: LatLng(task.latitude!, task.longitude!),
+                                    position: LatLng(
+                                      task.latitude!,
+                                      task.longitude!,
+                                    ),
                                   ),
                                 },
                                 zoomControlsEnabled: false,

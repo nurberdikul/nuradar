@@ -14,7 +14,8 @@ class FocusSessionPage extends ConsumerStatefulWidget {
   ConsumerState<FocusSessionPage> createState() => _FocusSessionPageState();
 }
 
-class _FocusSessionPageState extends ConsumerState<FocusSessionPage> with WidgetsBindingObserver {
+class _FocusSessionPageState extends ConsumerState<FocusSessionPage>
+    with WidgetsBindingObserver {
   static const int _totalSeconds = 25 * 60;
   int _remainingSeconds = _totalSeconds;
   Timer? _timer;
@@ -47,7 +48,9 @@ class _FocusSessionPageState extends ConsumerState<FocusSessionPage> with Widget
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Фокус потерян! Не отвлекайтесь на другие приложения 📵'),
+          content: Text(
+            'Фокус потерян! Не отвлекайтесь на другие приложения 📵',
+          ),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
         ),
@@ -86,16 +89,22 @@ class _FocusSessionPageState extends ConsumerState<FocusSessionPage> with Widget
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.darkCardColor,
-        title: const Text('Сессия завершена!'),
-        content: const Text('Вы молодец! Цель достигнута.'),
+        backgroundColor: AppTheme.darkBackgroundColor,
+        title: const Text(
+          'Сессия завершена!',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Вы молодец! Цель достигнута.',
+          style: TextStyle(color: Colors.white70),
+        ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context); // Close dialog
               Navigator.pop(context); // Exit session
             },
-            child: const Text('Ура!'),
+            child: const Text('Ура!', style: TextStyle(color: AppTheme.primaryLight)),
           ),
         ],
       ),
@@ -180,10 +189,7 @@ class _FocusSessionPageState extends ConsumerState<FocusSessionPage> with Widget
                   ),
                   child: const Text(
                     'Прервать фокус',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -198,13 +204,19 @@ class _FocusSessionPageState extends ConsumerState<FocusSessionPage> with Widget
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.darkCardColor,
-        title: const Text('Сдаться?'),
-        content: const Text('Если выйдешь сейчас, прогресс сгорит.'),
+        backgroundColor: AppTheme.darkBackgroundColor,
+        title: const Text(
+          'Сдаться?',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Если выйдешь сейчас, прогресс сгорит.',
+          style: TextStyle(color: Colors.white70),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Продолжить работу'),
+            child: const Text('Продолжить работу', style: TextStyle(color: Colors.blueAccent)),
           ),
           TextButton(
             onPressed: () {

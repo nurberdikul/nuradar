@@ -28,6 +28,7 @@ abstract class TaskEntity with _$TaskEntity {
     @Default(0) int totalFocusTime,
     @Default(0) int actualFocusTime,
     @Default(false) bool wasInterrupted,
+    String? recognizedText,
     String? category,
     double? latitude,
     double? longitude,

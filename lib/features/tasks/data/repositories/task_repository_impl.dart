@@ -67,7 +67,6 @@ class TaskRepositoryImpl implements TaskRepository {
     await _saveToBox(model);
 
     // 2️⃣ Best-effort remote write.
-    print('--- addTask called: calling _setInFirestore ---');
     await _setInFirestore(model);
   }
 
@@ -133,20 +132,15 @@ class TaskRepositoryImpl implements TaskRepository {
   /// All exceptions are caught; failures are logged and silently ignored so
   /// that the app remains fully functional while offline.
   Future<void> _setInFirestore(TaskModel model) async {
-    print('--- _setInFirestore called for task: ${model.id} ---');
     if (_firestore == null) {
-      print('--- _firestore is null! ---');
       return;
     }
     try {
-      print('--- Attempting to write to Firestore... ---');
       await _firestore
           .collection(_kCollection)
           .doc(model.id)
           .set(model.toJson());
-      print('--- _setInFirestore SUCCESS ---');
     } catch (e, st) {
-      print('FIRESTORE ERROR: $e');
       log(
         'TaskRepositoryImpl: failed to sync task ${model.id} to Firestore.',
         error: e,
@@ -166,8 +160,10 @@ class TaskRepositoryImpl implements TaskRepository {
       final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
       if (currentUserUid == null) return;
 
-      final snapshot =
-          await _firestore.collection(_kCollection).where('userId', isEqualTo: currentUserUid).get();
+      final snapshot = await _firestore
+          .collection(_kCollection)
+          .where('userId', isEqualTo: currentUserUid)
+          .get();
 
       for (final doc in snapshot.docs) {
         final model = TaskModel.fromJson(doc.data());

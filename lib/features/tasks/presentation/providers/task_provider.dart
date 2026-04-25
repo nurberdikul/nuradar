@@ -39,7 +39,9 @@ class TasksNotifier extends _$TasksNotifier {
   Future<void> updateTask(TaskEntity task) async {
     final repository = ref.read(taskRepositoryProvider);
     final currentTasks = state.value ?? [];
-    final updatedTasks = currentTasks.map((t) => t.id == task.id ? task : t).toList();
+    final updatedTasks = currentTasks
+        .map((t) => t.id == task.id ? task : t)
+        .toList();
     state = AsyncData(updatedTasks);
     try {
       await repository.updateTask(task);

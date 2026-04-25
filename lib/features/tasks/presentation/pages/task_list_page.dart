@@ -31,7 +31,9 @@ class TaskListPage extends ConsumerWidget {
           final completedTasks = tasks.where((t) => t.isCompleted).toList();
 
           // Сортировка активных задач по приоритету (High -> Low)
-          activeTasks.sort((a, b) => b.priority.index.compareTo(a.priority.index));
+          activeTasks.sort(
+            (a, b) => b.priority.index.compareTo(a.priority.index),
+          );
 
           return ListView(
             padding: const EdgeInsets.all(16),

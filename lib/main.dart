@@ -33,7 +33,6 @@ void main() async {
     );
   }
 
-
   runApp(const ProviderScope(child: FocusBuddyApp()));
 }
 
@@ -56,16 +55,10 @@ class FocusBuddyApp extends ConsumerWidget {
           }
           return const LoginPage();
         },
-        loading: () => const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-        error: (err, stack) => Scaffold(
-          body: Center(
-            child: Text('Ошибка авторизации: $err'),
-          ),
-        ),
+        loading: () =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
+        error: (err, stack) =>
+            Scaffold(body: Center(child: Text('Ошибка авторизации: $err'))),
       ),
     );
   }

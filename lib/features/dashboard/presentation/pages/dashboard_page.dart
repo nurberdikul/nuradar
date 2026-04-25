@@ -11,8 +11,18 @@ class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
 
   static const _months = [
-    'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
-    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+    'января',
+    'февраля',
+    'марта',
+    'апреля',
+    'мая',
+    'июня',
+    'июля',
+    'августа',
+    'сентября',
+    'октября',
+    'ноября',
+    'декабря',
   ];
 
   @override
@@ -23,9 +33,7 @@ class DashboardPage extends ConsumerWidget {
     final dateStr = '${today.day} ${_months[today.month - 1]}, ${today.year}';
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('nuradar'),
-      ),
+      appBar: AppBar(title: const Text('nuradar')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -48,9 +56,9 @@ class DashboardPage extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               dateStr,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.grey,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: Colors.grey),
             ),
             const SizedBox(height: 24),
 
@@ -68,25 +76,32 @@ class DashboardPage extends ConsumerWidget {
                         children: [
                           const Text(
                             'Погода в Алматы',
-                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           weatherAsyncValue.when(
                             data: (temp) => Text(
                               temp,
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              style: Theme.of(context).textTheme.headlineSmall
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             loading: () => const Padding(
                               padding: EdgeInsets.symmetric(vertical: 4.0),
                               child: SizedBox(
                                 height: 20,
                                 width: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               ),
                             ),
-                            error: (err, stack) => const Text('Ошибка загрузки', style: TextStyle(color: Colors.red)),
+                            error: (err, stack) => const Text(
+                              'Ошибка загрузки',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ),
                         ],
                       ),
@@ -100,9 +115,9 @@ class DashboardPage extends ConsumerWidget {
             // Заголовок списка
             Text(
               'Готовы к фокусу?',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
 
@@ -110,14 +125,19 @@ class DashboardPage extends ConsumerWidget {
             Expanded(
               child: tasksAsyncValue.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text('Ошибка загрузки задач: $err')),
+                error: (err, stack) =>
+                    Center(child: Text('Ошибка загрузки задач: $err')),
                 data: (tasks) {
                   // 1. Фильтруем только невыполненные
-                  final activeTasks = tasks.where((t) => !t.isCompleted).toList();
-                  
+                  final activeTasks = tasks
+                      .where((t) => !t.isCompleted)
+                      .toList();
+
                   // 2. Сортируем по приоритету (High -> Low)
-                  activeTasks.sort((a, b) => b.priority.index.compareTo(a.priority.index));
-                  
+                  activeTasks.sort(
+                    (a, b) => b.priority.index.compareTo(a.priority.index),
+                  );
+
                   // 3. Берем максимум 3 задачи
                   final topTasks = activeTasks.take(3).toList();
 
@@ -127,7 +147,11 @@ class DashboardPage extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.timer, size: 64, color: AppTheme.primaryColor),
+                          Icon(
+                            Icons.timer,
+                            size: 64,
+                            color: AppTheme.primaryColor,
+                          ),
                           const SizedBox(height: 16),
                           Text(
                             'Нет активных целей. Добавь цель и запусти таймер!',

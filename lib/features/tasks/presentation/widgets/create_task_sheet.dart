@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/ocr_service.dart';
 import '../../domain/entities/task_entity.dart';
 import '../../domain/entities/task_priority.dart';
 import '../providers/task_provider.dart';
@@ -24,26 +25,46 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
   final _milestoneController = TextEditingController();
   final List<String> _milestoneTitles = [];
   String? _imagePath;
+  String? _recognizedText;
+  bool _isProcessingOCR = false;
   double? _lat;
   double? _lng;
   TaskPriority _selectedPriority = TaskPriority.medium;
+  final _ocrService = OCRService();
 
   @override
   void dispose() {
     _titleController.dispose();
     _descController.dispose();
     _milestoneController.dispose();
+    _ocrService.dispose();
     super.dispose();
   }
 
   Future<void> _takePhoto() async {
     final picker = ImagePicker();
-    // Обратите внимание: на некоторых платформах могут потребоваться разрешения
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       setState(() {
         _imagePath = pickedFile.path;
+        _isProcessingOCR = true;
       });
+
+      try {
+        final text = await _ocrService.recognizeText(File(pickedFile.path));
+        setState(() {
+          _recognizedText = text;
+          if (text.isNotEmpty && _descController.text.isEmpty) {
+            _descController.text = text;
+          }
+        });
+      } catch (e) {
+        // OCR failed, but we still want to continue
+      } finally {
+        setState(() {
+          _isProcessingOCR = false;
+        });
+      }
     }
   }
 
@@ -96,11 +117,13 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
       priority: _selectedPriority,
       isCompleted: false,
       imageUrls: _imagePath != null ? [_imagePath!] : const [],
-      milestones: _milestoneTitles.map((title) => Milestone(
-        id: const Uuid().v4(),
-        title: title,
-        isDone: false,
-      )).toList(),
+      milestones: _milestoneTitles
+          .map(
+            (title) =>
+                Milestone(id: const Uuid().v4(), title: title, isDone: false),
+          )
+          .toList(),
+      recognizedText: _recognizedText,
       latitude: _lat,
       longitude: _lng,
       userId: FirebaseAuth.instance.currentUser?.uid,
@@ -128,9 +151,9 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
         children: [
           Text(
             'Создать задачу',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           TextField(
@@ -153,9 +176,9 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
           const SizedBox(height: 16),
           Text(
             'Приоритет',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Row(
@@ -180,7 +203,9 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
                       });
                     }
                   },
-                  selectedColor: _getPriorityColor(priority).withValues(alpha: 0.3),
+                  selectedColor: _getPriorityColor(
+                    priority,
+                  ).withValues(alpha: 0.3),
                   checkmarkColor: _getPriorityColor(priority),
                 ),
               );
@@ -190,9 +215,9 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
           // Milestones Section
           Text(
             'Шаги к цели',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Row(
@@ -236,14 +261,38 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
           if (_imagePath != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.file(
-                  File(_imagePath!),
-                  height: 60,
-                  width: 60,
-                  fit: BoxFit.cover,
-                ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      File(_imagePath!),
+                      height: 60,
+                      width: 60,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  if (_isProcessingOCR)
+                    Container(
+                      height: 60,
+                      width: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.black26,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           TextButton.icon(
@@ -255,7 +304,9 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
           OutlinedButton.icon(
             onPressed: _attachLocation,
             icon: Icon(_lat != null ? Icons.location_on : Icons.location_off),
-            label: Text(_lat != null ? 'Локация прикреплена' : 'Прикрепить локацию'),
+            label: Text(
+              _lat != null ? 'Локация прикреплена' : 'Прикрепить локацию',
+            ),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 12),
             ),

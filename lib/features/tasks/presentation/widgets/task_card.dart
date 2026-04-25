@@ -16,6 +16,31 @@ class TaskCard extends ConsumerWidget {
 
   const TaskCard({super.key, required this.task});
 
+  void _showRecognizedText(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.darkBackgroundColor,
+        title: const Text(
+          'Распознанный текст',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        content: SingleChildScrollView(
+          child: Text(
+            task.recognizedText!,
+            style: const TextStyle(color: Colors.white70),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Закрыть', style: TextStyle(color: AppTheme.primaryLight)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Dismissible(
@@ -41,10 +66,7 @@ class TaskCard extends ConsumerWidget {
           child: Row(
             children: [
               // Priority indicator
-              Container(
-                width: 6,
-                color: _getPriorityColor(task.priority),
-              ),
+              Container(width: 6, color: _getPriorityColor(task.priority)),
               const SizedBox(width: 4),
               // Completion Checkbox
               // Focus Start Button
@@ -73,7 +95,10 @@ class TaskCard extends ConsumerWidget {
                     );
                   },
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 8,
+                    ),
                     child: Row(
                       children: [
                         if (task.imageUrls.isNotEmpty)
@@ -85,7 +110,10 @@ class TaskCard extends ConsumerWidget {
                                 width: 48,
                                 height: 48,
                                 child: kIsWeb
-                                    ? Image.network(task.imageUrls.first, fit: BoxFit.cover)
+                                    ? Image.network(
+                                        task.imageUrls.first,
+                                        fit: BoxFit.cover,
+                                      )
                                     : Image.file(
                                         File(task.imageUrls.first),
                                         fit: BoxFit.cover,
@@ -98,62 +126,97 @@ class TaskCard extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        task.title,
-                                        style: TextStyle(
-                                          decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-                                          color: task.isCompleted ? Colors.grey : null,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                    if (task.imageUrls.isNotEmpty)
-                                      const Icon(
-                                        Icons.image,
-                                        size: 16,
-                                        color: Colors.grey,
-                                      ),
-                                  ],
-                                ),
-                                if (task.milestones.isNotEmpty) ...[
-                                  const SizedBox(height: 8),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(4),
-                                    child: LinearProgressIndicator(
-                                      value: task.milestones.where((m) => m.isDone).length /
-                                          task.milestones.length,
-                                      backgroundColor: Colors.grey[200],
-                                      color: AppTheme.successColor,
-                                      minHeight: 6,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${task.milestones.where((m) => m.isDone).length}/${task.milestones.length} шагов выполнено',
-                                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                          color: Colors.grey,
-                                        ),
-                                  ),
-                                ],
-                                if (task.category != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 4.0),
+                              Row(
+                                children: [
+                                  Expanded(
                                     child: Text(
-                                      task.category!,
-                                      style: Theme.of(context).textTheme.bodySmall,
+                                      task.title,
+                                      style: TextStyle(
+                                        decoration: task.isCompleted
+                                            ? TextDecoration.lineThrough
+                                            : null,
+                                        color: task.isCompleted
+                                            ? Colors.grey
+                                            : null,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
                                     ),
                                   ),
+                                  if (task.imageUrls.isNotEmpty)
+                                    const Icon(
+                                      Icons.image,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    ),
+                                ],
+                              ),
+                              if (task.milestones.isNotEmpty) ...[
+                                const SizedBox(height: 8),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: LinearProgressIndicator(
+                                    value:
+                                        task.milestones
+                                            .where((m) => m.isDone)
+                                            .length /
+                                        task.milestones.length,
+                                    backgroundColor: Colors.grey[200],
+                                    color: AppTheme.successColor,
+                                    minHeight: 6,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${task.milestones.where((m) => m.isDone).length}/${task.milestones.length} шагов выполнено',
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(color: Colors.grey),
+                                ),
+                              ],
+                              if (task.category != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Text(
+                                    task.category!,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
+                                  ),
+                                ),
+                              if (task.recognizedText != null &&
+                                  task.recognizedText!.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: TextButton.icon(
+                                    onPressed: () =>
+                                        _showRecognizedText(context),
+                                    icon: const Icon(
+                                      Icons.text_fields,
+                                      size: 16,
+                                    ),
+                                    label: const Text(
+                                      'Текст с фото',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      padding: EdgeInsets.zero,
+                                      minimumSize: const Size(0, 30),
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                  ),
+                                ),
                             ],
                           ),
                         ),
                         if (task.latitude != null && task.longitude != null)
                           const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Icon(Icons.location_on, size: 20, color: Colors.blue),
+                            child: Icon(
+                              Icons.location_on,
+                              size: 20,
+                              color: Colors.blue,
+                            ),
                           ),
                       ],
                     ),

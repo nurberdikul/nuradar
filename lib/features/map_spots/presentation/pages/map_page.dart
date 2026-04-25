@@ -12,13 +12,9 @@ class MapPage extends ConsumerWidget {
     final positionAsync = ref.watch(mapProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Радар мест'),
-      ),
+      appBar: AppBar(title: const Text('Радар мест')),
       body: positionAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),

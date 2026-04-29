@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/custom_snackbar.dart';
 import '../../../tasks/presentation/providers/task_provider.dart';
 import '../../../tasks/presentation/widgets/task_card.dart';
 import '../../../tasks/presentation/pages/focus_session_page.dart';
 import '../../../map_spots/presentation/providers/map_provider.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/dashboard_providers.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -31,18 +33,14 @@ class DashboardPage extends StatelessWidget {
     final mapProvider = context.read<MapProvider>();
     final taskProvider = context.read<TaskProvider>();
     
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Проверяем локацию...')),
-    );
+    CustomSnackbar.showInfo(context, 'Проверяем локацию...');
 
     await mapProvider.updateLocation();
     
     if (!context.mounted) return;
     
     if (mapProvider.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка локации: ${mapProvider.error}')),
-      );
+      CustomSnackbar.showError(context, 'Ошибка локации: ${mapProvider.error}');
       return;
     }
 
@@ -70,9 +68,7 @@ class DashboardPage extends StatelessWidget {
         ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Рядом нет активных задач с привязанной локацией.')),
-      );
+      CustomSnackbar.showInfo(context, 'Рядом нет активных задач с привязанной локацией.');
     }
   }
 
@@ -102,11 +98,14 @@ class DashboardPage extends StatelessWidget {
             // Приветствие и дата
             Builder(
               builder: (context) {
-                final user = FirebaseAuth.instance.currentUser;
-                final email = user?.email ?? 'User';
-                final name = email.split('@')[0];
+                final authProvider = context.watch<AuthProvider>();
+                final user = authProvider.user ?? FirebaseAuth.instance.currentUser;
+                final email = user?.email ?? '';
+                final name = user?.displayName?.isNotEmpty == true 
+                    ? user!.displayName! 
+                    : (email.isNotEmpty ? email.split('@')[0] : 'Друг');
                 return Text(
-                  'Привет, $name 👋',
+                  'Привет, $name! 👋',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),

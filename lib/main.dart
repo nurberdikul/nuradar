@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'core/presentation/pages/main_screen.dart';
@@ -12,6 +12,8 @@ import 'features/auth/presentation/providers/auth_provider.dart';
 import 'features/tasks/presentation/providers/task_provider.dart';
 import 'features/map_spots/presentation/providers/map_provider.dart';
 import 'features/dashboard/presentation/providers/dashboard_providers.dart';
+import 'features/tasks/data/models/task_model.dart';
+import 'features/tasks/domain/entities/task_priority.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -19,6 +21,9 @@ void main() async {
 
   // Инициализация Hive и открытие локальной БД
   await Hive.initFlutter();
+  Hive.registerAdapter(TaskModelAdapter());
+  Hive.registerAdapter(MilestoneModelAdapter());
+  Hive.registerAdapter(TaskPriorityAdapter());
   await Hive.openBox('offline_tasks');
 
   // Инициализация Firebase

@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 
 import '../../domain/entities/task_entity.dart';
 import '../../domain/repositories/task_repository.dart';
@@ -116,8 +116,7 @@ class TaskRepositoryImpl implements TaskRepository {
   List<TaskEntity> _readFromBox() {
     final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
     return _taskBox.values
-        .whereType<Map>()
-        .map((raw) => TaskModel.fromJson(Map<String, dynamic>.from(raw)))
+        .whereType<TaskModel>()
         .where((model) => model.userId == currentUserUid)
         .map((model) => model.toEntity())
         .toList();
@@ -125,7 +124,7 @@ class TaskRepositoryImpl implements TaskRepository {
 
   /// Persists a [TaskModel] to the local Hive box, keyed by [TaskModel.id].
   Future<void> _saveToBox(TaskModel model) async {
-    await _taskBox.put(model.id, model.toJson());
+    await _taskBox.put(model.id, model);
   }
 
   /// Creates or overwrites a document in Firestore.

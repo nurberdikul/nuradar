@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/custom_snackbar.dart';
 import '../../domain/entities/task_entity.dart';
 import '../providers/task_provider.dart';
 
@@ -48,14 +49,9 @@ class _FocusSessionPageState extends State<FocusSessionPage>
     _timer?.cancel();
     if (mounted) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Фокус потерян! Не отвлекайтесь на другие приложения 📵',
-          ),
-          backgroundColor: Colors.redAccent,
-          behavior: SnackBarBehavior.floating,
-        ),
+      CustomSnackbar.showError(
+        context,
+        'Фокус потерян! Не отвлекайтесь на другие приложения 📵',
       );
     }
   }
@@ -114,9 +110,16 @@ class _FocusSessionPageState extends State<FocusSessionPage>
   }
 
   String _formatTime(int seconds) {
-    final minutes = seconds ~/ 60;
-    final remainingSecs = seconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${remainingSecs.toString().padLeft(2, '0')}';
+    if (seconds >= 3600) {
+      final hours = seconds ~/ 3600;
+      final minutes = (seconds % 3600) ~/ 60;
+      final remainingSecs = seconds % 60;
+      return '$hours:${minutes.toString().padLeft(2, '0')}:${remainingSecs.toString().padLeft(2, '0')}';
+    } else {
+      final minutes = seconds ~/ 60;
+      final remainingSecs = seconds % 60;
+      return '${minutes.toString().padLeft(2, '0')}:${remainingSecs.toString().padLeft(2, '0')}';
+    }
   }
 
   @override

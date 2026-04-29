@@ -148,92 +148,93 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
       ),
       child: Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Создать задачу',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Создать задачу',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Название задачи',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Введите название задачи';
+                  }
+                  return null;
+                },
+              ),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: _titleController,
+            TextField(
+              controller: _descController,
               decoration: const InputDecoration(
-                labelText: 'Название задачи',
+                labelText: 'Описание',
                 border: OutlineInputBorder(),
               ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Пожалуйста, введите название задачи';
-                }
-                return null;
-              },
+              maxLines: 3,
+              minLines: 1,
             ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _descController,
-            decoration: const InputDecoration(
-              labelText: 'Описание',
-              border: OutlineInputBorder(),
+            const SizedBox(height: 16),
+            Text(
+              'Приоритет',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
-            maxLines: 3,
-            minLines: 1,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Приоритет',
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: TaskPriority.values.map((priority) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: ChoiceChip(
-                  label: Text(
-                    priority.name.toUpperCase(),
-                    style: TextStyle(
-                      color: _selectedPriority == priority
-                          ? _getPriorityColor(priority)
-                          : Colors.grey,
-                      fontWeight: FontWeight.bold,
+            const SizedBox(height: 8),
+            Row(
+              children: TaskPriority.values.map((priority) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: ChoiceChip(
+                    label: Text(
+                      priority.name.toUpperCase(),
+                      style: TextStyle(
+                        color: _selectedPriority == priority
+                            ? _getPriorityColor(priority)
+                            : Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                    selected: _selectedPriority == priority,
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() {
+                          _selectedPriority = priority;
+                        });
+                      }
+                    },
+                    selectedColor: _getPriorityColor(
+                      priority,
+                    ).withValues(alpha: 0.3),
+                    checkmarkColor: _getPriorityColor(priority),
                   ),
-                  selected: _selectedPriority == priority,
-                  onSelected: (selected) {
-                    if (selected) {
-                      setState(() {
-                        _selectedPriority = priority;
-                      });
-                    }
-                  },
-                  selectedColor: _getPriorityColor(
-                    priority,
-                  ).withValues(alpha: 0.3),
-                  checkmarkColor: _getPriorityColor(priority),
-                ),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 16),
-          // Duration Section
-          Text(
-            'Время фокуса',
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: _durations.map((duration) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: ChoiceChip(
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            // Duration Section
+            Text(
+              'Время фокуса',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: _durations.map((duration) {
+                return ChoiceChip(
                   label: Text(
                     '$duration мин',
                     style: TextStyle(
@@ -253,122 +254,122 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                   },
                   selectedColor: AppTheme.primaryLight.withValues(alpha: 0.2),
                   checkmarkColor: AppTheme.primaryLight,
-                ),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 16),
-          // Milestones Section
-          Text(
-            'Шаги к цели',
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _milestoneController,
-                  decoration: const InputDecoration(
-                    hintText: 'Что нужно сделать?',
-                    isDense: true,
-                  ),
-                  onSubmitted: (_) => _addMilestone(),
-                ),
-              ),
-              IconButton(
-                onPressed: _addMilestone,
-                icon: const Icon(Icons.add_circle_outline),
-                color: AppTheme.primaryColor,
-              ),
-            ],
-          ),
-          if (_milestoneTitles.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Column(
-                children: _milestoneTitles.asMap().entries.map((entry) {
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                    leading: const Icon(Icons.circle, size: 8),
-                    title: Text(entry.value),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.close, size: 16),
-                      onPressed: () => _removeMilestone(entry.key),
-                    ),
-                  );
-                }).toList(),
-              ),
+                );
+              }).toList(),
             ),
-          const SizedBox(height: 16),
-          if (_imagePath != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.file(
-                      File(_imagePath!),
-                      height: 60,
-                      width: 60,
-                      fit: BoxFit.cover,
+            const SizedBox(height: 16),
+            // Milestones Section
+            Text(
+              'Шаги к цели',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _milestoneController,
+                    decoration: const InputDecoration(
+                      hintText: 'Что нужно сделать?',
+                      isDense: true,
                     ),
+                    onSubmitted: (_) => _addMilestone(),
                   ),
-                  if (_isProcessingOCR)
-                    Container(
-                      height: 60,
-                      width: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.black26,
-                        borderRadius: BorderRadius.circular(8),
+                ),
+                IconButton(
+                  onPressed: _addMilestone,
+                  icon: const Icon(Icons.add_circle_outline),
+                  color: AppTheme.primaryColor,
+                ),
+              ],
+            ),
+            if (_milestoneTitles.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Column(
+                  children: _milestoneTitles.asMap().entries.map((entry) {
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity: VisualDensity.compact,
+                      leading: const Icon(Icons.circle, size: 8),
+                      title: Text(entry.value),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.close, size: 16),
+                        onPressed: () => _removeMilestone(entry.key),
                       ),
-                      child: const Center(
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
+                    );
+                  }).toList(),
+                ),
+              ),
+            const SizedBox(height: 16),
+            if (_imagePath != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.file(
+                        File(_imagePath!),
+                        height: 60,
+                        width: 60,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    if (_isProcessingOCR)
+                      Container(
+                        height: 60,
+                        width: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.black26,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
+              ),
+            TextButton.icon(
+              onPressed: _takePhoto,
+              icon: const Icon(Icons.camera_alt),
+              label: const Text('Прикрепить конспект'),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: _attachLocation,
+              icon: Icon(_lat != null ? Icons.location_on : Icons.location_off),
+              label: Text(
+                _lat != null ? 'Локация прикреплена' : 'Прикрепить локацию',
+              ),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
               ),
             ),
-          TextButton.icon(
-            onPressed: _takePhoto,
-            icon: const Icon(Icons.camera_alt),
-            label: const Text('Прикрепить конспект'),
-          ),
-          const SizedBox(height: 12),
-          OutlinedButton.icon(
-            onPressed: _attachLocation,
-            icon: Icon(_lat != null ? Icons.location_on : Icons.location_off),
-            label: Text(
-              _lat != null ? 'Локация прикреплена' : 'Прикрепить локацию',
-            ),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-          ),
-          const SizedBox(height: 12),
-          FilledButton(
-            onPressed: _createTask,
-            style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            const SizedBox(height: 12),
+            FilledButton(
+              onPressed: _createTask,
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
+              child: const Text('Создать задачу', style: TextStyle(fontSize: 16)),
             ),
-            child: const Text('Создать задачу', style: TextStyle(fontSize: 16)),
-          ),
-        ],
+          ],
+        ),
       ),
       ),
     );

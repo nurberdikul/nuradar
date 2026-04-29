@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MilestoneModel {
 
- String get id; String get title; bool get isDone;
+@HiveField(0) String get id;@HiveField(1) String get title;@HiveField(2) bool get isDone;
 /// Create a copy of MilestoneModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $MilestoneModelCopyWith<$Res>  {
   factory $MilestoneModelCopyWith(MilestoneModel value, $Res Function(MilestoneModel) _then) = _$MilestoneModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, bool isDone
+@HiveField(0) String id,@HiveField(1) String title,@HiveField(2) bool isDone
 });
 
 
@@ -155,7 +155,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  bool isDone)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)  String title, @HiveField(2)  bool isDone)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MilestoneModel() when $default != null:
 return $default(_that.id,_that.title,_that.isDone);case _:
@@ -176,7 +176,7 @@ return $default(_that.id,_that.title,_that.isDone);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  bool isDone)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)  String title, @HiveField(2)  bool isDone)  $default,) {final _that = this;
 switch (_that) {
 case _MilestoneModel():
 return $default(_that.id,_that.title,_that.isDone);case _:
@@ -196,7 +196,7 @@ return $default(_that.id,_that.title,_that.isDone);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  bool isDone)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@HiveField(0)  String id, @HiveField(1)  String title, @HiveField(2)  bool isDone)?  $default,) {final _that = this;
 switch (_that) {
 case _MilestoneModel() when $default != null:
 return $default(_that.id,_that.title,_that.isDone);case _:
@@ -211,12 +211,12 @@ return $default(_that.id,_that.title,_that.isDone);case _:
 @JsonSerializable()
 
 class _MilestoneModel extends MilestoneModel {
-  const _MilestoneModel({required this.id, required this.title, this.isDone = false}): super._();
+  const _MilestoneModel({@HiveField(0) required this.id, @HiveField(1) required this.title, @HiveField(2) this.isDone = false}): super._();
   factory _MilestoneModel.fromJson(Map<String, dynamic> json) => _$MilestoneModelFromJson(json);
 
-@override final  String id;
-@override final  String title;
-@override@JsonKey() final  bool isDone;
+@override@HiveField(0) final  String id;
+@override@HiveField(1) final  String title;
+@override@JsonKey()@HiveField(2) final  bool isDone;
 
 /// Create a copy of MilestoneModel
 /// with the given fields replaced by the non-null parameter values.
@@ -251,7 +251,7 @@ abstract mixin class _$MilestoneModelCopyWith<$Res> implements $MilestoneModelCo
   factory _$MilestoneModelCopyWith(_MilestoneModel value, $Res Function(_MilestoneModel) _then) = __$MilestoneModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, bool isDone
+@HiveField(0) String id,@HiveField(1) String title,@HiveField(2) bool isDone
 });
 
 
@@ -284,7 +284,7 @@ as bool,
 /// @nodoc
 mixin _$TaskModel {
 
- String get id; String get title; String get description; DateTime get dueDate; TaskPriority get priority; bool get isCompleted; List<String> get imageUrls; List<MilestoneModel> get milestones; int get totalFocusTime; int get actualFocusTime;@JsonKey(defaultValue: 0) int get interruptions;@JsonKey(defaultValue: 25) int get plannedDuration; String? get recognizedText; String? get category; double? get latitude; double? get longitude; String? get userId;
+@HiveField(0) String get id;@HiveField(1) String get title;@HiveField(2) String get description;@HiveField(3) DateTime get dueDate;@HiveField(4) TaskPriority get priority;@HiveField(5) bool get isCompleted;@HiveField(6) List<String> get imageUrls;@HiveField(7) List<MilestoneModel> get milestones;@HiveField(8) int get totalFocusTime;@HiveField(9) int get actualFocusTime;@HiveField(10)@JsonKey(defaultValue: 0) int get interruptions;@HiveField(11)@JsonKey(defaultValue: 25) int get plannedDuration;@HiveField(12) String? get recognizedText;@HiveField(13) String? get category;@HiveField(14) double? get latitude;@HiveField(15) double? get longitude;@HiveField(16) String? get userId;
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -317,7 +317,7 @@ abstract mixin class $TaskModelCopyWith<$Res>  {
   factory $TaskModelCopyWith(TaskModel value, $Res Function(TaskModel) _then) = _$TaskModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String description, DateTime dueDate, TaskPriority priority, bool isCompleted, List<String> imageUrls, List<MilestoneModel> milestones, int totalFocusTime, int actualFocusTime,@JsonKey(defaultValue: 0) int interruptions,@JsonKey(defaultValue: 25) int plannedDuration, String? recognizedText, String? category, double? latitude, double? longitude, String? userId
+@HiveField(0) String id,@HiveField(1) String title,@HiveField(2) String description,@HiveField(3) DateTime dueDate,@HiveField(4) TaskPriority priority,@HiveField(5) bool isCompleted,@HiveField(6) List<String> imageUrls,@HiveField(7) List<MilestoneModel> milestones,@HiveField(8) int totalFocusTime,@HiveField(9) int actualFocusTime,@HiveField(10)@JsonKey(defaultValue: 0) int interruptions,@HiveField(11)@JsonKey(defaultValue: 25) int plannedDuration,@HiveField(12) String? recognizedText,@HiveField(13) String? category,@HiveField(14) double? latitude,@HiveField(15) double? longitude,@HiveField(16) String? userId
 });
 
 
@@ -438,7 +438,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  List<MilestoneModel> milestones,  int totalFocusTime,  int actualFocusTime, @JsonKey(defaultValue: 0)  int interruptions, @JsonKey(defaultValue: 25)  int plannedDuration,  String? recognizedText,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)  String title, @HiveField(2)  String description, @HiveField(3)  DateTime dueDate, @HiveField(4)  TaskPriority priority, @HiveField(5)  bool isCompleted, @HiveField(6)  List<String> imageUrls, @HiveField(7)  List<MilestoneModel> milestones, @HiveField(8)  int totalFocusTime, @HiveField(9)  int actualFocusTime, @HiveField(10)@JsonKey(defaultValue: 0)  int interruptions, @HiveField(11)@JsonKey(defaultValue: 25)  int plannedDuration, @HiveField(12)  String? recognizedText, @HiveField(13)  String? category, @HiveField(14)  double? latitude, @HiveField(15)  double? longitude, @HiveField(16)  String? userId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TaskModel() when $default != null:
 return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.milestones,_that.totalFocusTime,_that.actualFocusTime,_that.interruptions,_that.plannedDuration,_that.recognizedText,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
@@ -459,7 +459,7 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.prior
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  List<MilestoneModel> milestones,  int totalFocusTime,  int actualFocusTime, @JsonKey(defaultValue: 0)  int interruptions, @JsonKey(defaultValue: 25)  int plannedDuration,  String? recognizedText,  String? category,  double? latitude,  double? longitude,  String? userId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)  String title, @HiveField(2)  String description, @HiveField(3)  DateTime dueDate, @HiveField(4)  TaskPriority priority, @HiveField(5)  bool isCompleted, @HiveField(6)  List<String> imageUrls, @HiveField(7)  List<MilestoneModel> milestones, @HiveField(8)  int totalFocusTime, @HiveField(9)  int actualFocusTime, @HiveField(10)@JsonKey(defaultValue: 0)  int interruptions, @HiveField(11)@JsonKey(defaultValue: 25)  int plannedDuration, @HiveField(12)  String? recognizedText, @HiveField(13)  String? category, @HiveField(14)  double? latitude, @HiveField(15)  double? longitude, @HiveField(16)  String? userId)  $default,) {final _that = this;
 switch (_that) {
 case _TaskModel():
 return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.milestones,_that.totalFocusTime,_that.actualFocusTime,_that.interruptions,_that.plannedDuration,_that.recognizedText,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
@@ -479,7 +479,7 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.prior
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  DateTime dueDate,  TaskPriority priority,  bool isCompleted,  List<String> imageUrls,  List<MilestoneModel> milestones,  int totalFocusTime,  int actualFocusTime, @JsonKey(defaultValue: 0)  int interruptions, @JsonKey(defaultValue: 25)  int plannedDuration,  String? recognizedText,  String? category,  double? latitude,  double? longitude,  String? userId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@HiveField(0)  String id, @HiveField(1)  String title, @HiveField(2)  String description, @HiveField(3)  DateTime dueDate, @HiveField(4)  TaskPriority priority, @HiveField(5)  bool isCompleted, @HiveField(6)  List<String> imageUrls, @HiveField(7)  List<MilestoneModel> milestones, @HiveField(8)  int totalFocusTime, @HiveField(9)  int actualFocusTime, @HiveField(10)@JsonKey(defaultValue: 0)  int interruptions, @HiveField(11)@JsonKey(defaultValue: 25)  int plannedDuration, @HiveField(12)  String? recognizedText, @HiveField(13)  String? category, @HiveField(14)  double? latitude, @HiveField(15)  double? longitude, @HiveField(16)  String? userId)?  $default,) {final _that = this;
 switch (_that) {
 case _TaskModel() when $default != null:
 return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.isCompleted,_that.imageUrls,_that.milestones,_that.totalFocusTime,_that.actualFocusTime,_that.interruptions,_that.plannedDuration,_that.recognizedText,_that.category,_that.latitude,_that.longitude,_that.userId);case _:
@@ -494,38 +494,38 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.prior
 @JsonSerializable()
 
 class _TaskModel extends TaskModel {
-  const _TaskModel({required this.id, required this.title, required this.description, required this.dueDate, this.priority = TaskPriority.medium, this.isCompleted = false, final  List<String> imageUrls = const [], final  List<MilestoneModel> milestones = const [], this.totalFocusTime = 0, this.actualFocusTime = 0, @JsonKey(defaultValue: 0) this.interruptions = 0, @JsonKey(defaultValue: 25) this.plannedDuration = 25, this.recognizedText, this.category, this.latitude, this.longitude, this.userId}): _imageUrls = imageUrls,_milestones = milestones,super._();
+  const _TaskModel({@HiveField(0) required this.id, @HiveField(1) required this.title, @HiveField(2) required this.description, @HiveField(3) required this.dueDate, @HiveField(4) this.priority = TaskPriority.medium, @HiveField(5) this.isCompleted = false, @HiveField(6) final  List<String> imageUrls = const [], @HiveField(7) final  List<MilestoneModel> milestones = const [], @HiveField(8) this.totalFocusTime = 0, @HiveField(9) this.actualFocusTime = 0, @HiveField(10)@JsonKey(defaultValue: 0) this.interruptions = 0, @HiveField(11)@JsonKey(defaultValue: 25) this.plannedDuration = 25, @HiveField(12) this.recognizedText, @HiveField(13) this.category, @HiveField(14) this.latitude, @HiveField(15) this.longitude, @HiveField(16) this.userId}): _imageUrls = imageUrls,_milestones = milestones,super._();
   factory _TaskModel.fromJson(Map<String, dynamic> json) => _$TaskModelFromJson(json);
 
-@override final  String id;
-@override final  String title;
-@override final  String description;
-@override final  DateTime dueDate;
-@override@JsonKey() final  TaskPriority priority;
-@override@JsonKey() final  bool isCompleted;
+@override@HiveField(0) final  String id;
+@override@HiveField(1) final  String title;
+@override@HiveField(2) final  String description;
+@override@HiveField(3) final  DateTime dueDate;
+@override@JsonKey()@HiveField(4) final  TaskPriority priority;
+@override@JsonKey()@HiveField(5) final  bool isCompleted;
  final  List<String> _imageUrls;
-@override@JsonKey() List<String> get imageUrls {
+@override@JsonKey()@HiveField(6) List<String> get imageUrls {
   if (_imageUrls is EqualUnmodifiableListView) return _imageUrls;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_imageUrls);
 }
 
  final  List<MilestoneModel> _milestones;
-@override@JsonKey() List<MilestoneModel> get milestones {
+@override@JsonKey()@HiveField(7) List<MilestoneModel> get milestones {
   if (_milestones is EqualUnmodifiableListView) return _milestones;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_milestones);
 }
 
-@override@JsonKey() final  int totalFocusTime;
-@override@JsonKey() final  int actualFocusTime;
-@override@JsonKey(defaultValue: 0) final  int interruptions;
-@override@JsonKey(defaultValue: 25) final  int plannedDuration;
-@override final  String? recognizedText;
-@override final  String? category;
-@override final  double? latitude;
-@override final  double? longitude;
-@override final  String? userId;
+@override@JsonKey()@HiveField(8) final  int totalFocusTime;
+@override@JsonKey()@HiveField(9) final  int actualFocusTime;
+@override@HiveField(10)@JsonKey(defaultValue: 0) final  int interruptions;
+@override@HiveField(11)@JsonKey(defaultValue: 25) final  int plannedDuration;
+@override@HiveField(12) final  String? recognizedText;
+@override@HiveField(13) final  String? category;
+@override@HiveField(14) final  double? latitude;
+@override@HiveField(15) final  double? longitude;
+@override@HiveField(16) final  String? userId;
 
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
@@ -560,7 +560,7 @@ abstract mixin class _$TaskModelCopyWith<$Res> implements $TaskModelCopyWith<$Re
   factory _$TaskModelCopyWith(_TaskModel value, $Res Function(_TaskModel) _then) = __$TaskModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String description, DateTime dueDate, TaskPriority priority, bool isCompleted, List<String> imageUrls, List<MilestoneModel> milestones, int totalFocusTime, int actualFocusTime,@JsonKey(defaultValue: 0) int interruptions,@JsonKey(defaultValue: 25) int plannedDuration, String? recognizedText, String? category, double? latitude, double? longitude, String? userId
+@HiveField(0) String id,@HiveField(1) String title,@HiveField(2) String description,@HiveField(3) DateTime dueDate,@HiveField(4) TaskPriority priority,@HiveField(5) bool isCompleted,@HiveField(6) List<String> imageUrls,@HiveField(7) List<MilestoneModel> milestones,@HiveField(8) int totalFocusTime,@HiveField(9) int actualFocusTime,@HiveField(10)@JsonKey(defaultValue: 0) int interruptions,@HiveField(11)@JsonKey(defaultValue: 25) int plannedDuration,@HiveField(12) String? recognizedText,@HiveField(13) String? category,@HiveField(14) double? latitude,@HiveField(15) double? longitude,@HiveField(16) String? userId
 });
 
 

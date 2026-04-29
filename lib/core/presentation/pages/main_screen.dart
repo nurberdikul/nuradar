@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -164,11 +165,14 @@ class ProfileTab extends StatelessWidget {
                     }
                   }
 
+                  final chartMaxY = maxStat <= 0 ? 60.0 : maxStat * 1.2;
+                  final yInterval = math.max(1.0, (chartMaxY / 5).floorToDouble());
+
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Focus Insights',
+                        'Статистика фокуса',
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 16),
@@ -217,7 +221,7 @@ class ProfileTab extends StatelessWidget {
                         child: BarChart(
                           BarChartData(
                             alignment: BarChartAlignment.spaceAround,
-                            maxY: maxStat == 0 ? 10 : maxStat * 1.2,
+                            maxY: chartMaxY,
                             barTouchData: BarTouchData(enabled: false),
                             titlesData: FlTitlesData(
                               show: true,
@@ -235,6 +239,7 @@ class ProfileTab extends StatelessWidget {
                                 sideTitles: SideTitles(
                                   showTitles: true,
                                   reservedSize: 30,
+                                  interval: yInterval,
                                   getTitlesWidget: (value, meta) => Text('${value.toInt()}м', style: const TextStyle(fontSize: 10)),
                                 ),
                               ),

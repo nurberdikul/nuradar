@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/custom_snackbar.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -12,12 +14,15 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
   bool _isLoading = false;
+  bool _isLogin = true;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -25,10 +30,18 @@ class _LoginPageState extends State<LoginPage> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Пожалуйста, заполните все поля')),
-      );
+    if (email.isEmpty) {
+      CustomSnackbar.showError(context, 'Поле не может быть пустым');
+      return;
+    }
+    
+    if (!email.contains('@')) {
+      CustomSnackbar.showError(context, 'Введите корректный email');
+      return;
+    }
+
+    if (password.length < 6) {
+      CustomSnackbar.showError(context, 'Пароль должен быть не менее 6 символов');
       return;
     }
 
@@ -37,40 +50,34 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      // Пытаемся войти
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' ||
-          e.code == 'invalid-credential' ||
-          e.code == 'invalid-email') {
-        // Если пользователя нет или креды не подошли, пытаемся зарегистрировать
-        try {
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: email,
-            password: password,
-          );
-        } on FirebaseAuthException catch (e2) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Ошибка регистрации: ${e2.message}')),
-            );
-          }
-        }
+      if (_isLogin) {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
       } else {
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Ошибка входа: ${e.message}')));
+        final name = _nameController.text.trim();
+        if (name.isEmpty) {
+          CustomSnackbar.showError(context, 'Введите название');
+          setState(() {
+            _isLoading = false;
+          });
+          return;
         }
+        final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        await credential.user?.updateDisplayName(name);
+        await credential.user?.reload();
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        CustomSnackbar.showError(context, _getErrorMessage(e.code));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Произошла неизвестная ошибка: $e')),
-        );
+        CustomSnackbar.showError(context, 'Произошла неизвестная ошибка: $e');
       }
     } finally {
       if (mounted) {
@@ -79,6 +86,31 @@ class _LoginPageState extends State<LoginPage> {
         });
       }
     }
+  }
+
+  String _getErrorMessage(String code) {
+    switch (code) {
+      case 'invalid-credential':
+      case 'wrong-password':
+      case 'user-not-found':
+        return 'Неверный email или пароль';
+      case 'invalid-email':
+        return 'Некорректный формат email';
+      case 'email-already-in-use':
+        return 'Этот email уже зарегистрирован';
+      case 'weak-password':
+        return 'Слишком слабый пароль (минимум 6 символов)';
+      case 'network-request-failed':
+        return 'Ошибка сети. Проверьте подключение';
+      default:
+        return 'Произошла ошибка авторизации';
+    }
+  }
+
+  void _toggleMode() {
+    setState(() {
+      _isLogin = !_isLogin;
+    });
   }
 
   @override
@@ -103,6 +135,19 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 48),
+              if (!_isLogin) ...[
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Имя',
+                    prefixIcon: const Icon(Icons.person_outline),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -138,15 +183,28 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Войти / Зарегистрироваться',
-                        style: TextStyle(
+                      child: Text(
+                        _isLogin ? 'Войти' : 'Зарегистрироваться',
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
                     ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: _toggleMode,
+                child: Text(
+                  _isLogin
+                      ? 'Нет аккаунта? Зарегистрируйтесь'
+                      : 'Уже есть аккаунт? Войти',
+                  style: const TextStyle(
+                    color: AppTheme.primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

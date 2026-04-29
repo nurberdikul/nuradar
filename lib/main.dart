@@ -19,12 +19,11 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Инициализация Hive и открытие локальной БД
+  // Инициализация Hive
   await Hive.initFlutter();
   Hive.registerAdapter(TaskModelAdapter());
   Hive.registerAdapter(MilestoneModelAdapter());
   Hive.registerAdapter(TaskPriorityAdapter());
-  await Hive.openBox('offline_tasks');
 
   // Инициализация Firebase
   try {
@@ -45,18 +44,24 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => TaskProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, TaskProvider>(
+          create: (_) => TaskProvider(),
+          update: (_, auth, task) => task!..switchUser(auth.user?.uid),
+        ),
         ChangeNotifierProvider(create: (_) => MapProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
-        ChangeNotifierProvider(create: (_) => NavigationProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, NavigationProvider>(
+          create: (_) => NavigationProvider(),
+          update: (_, auth, nav) => nav!..handleUserChange(auth.user?.uid),
+        ),
       ],
-      child: const FocusBuddyApp(),
+      child: const NuradarApp(),
     ),
   );
 }
 
-class FocusBuddyApp extends StatelessWidget {
-  const FocusBuddyApp({super.key});
+class NuradarApp extends StatelessWidget {
+  const NuradarApp({super.key});
 
   @override
   Widget build(BuildContext context) {

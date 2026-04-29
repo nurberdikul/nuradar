@@ -12,10 +12,25 @@ import '../../../features/tasks/presentation/providers/task_provider.dart';
 
 class NavigationProvider extends ChangeNotifier {
   int _currentIndex = 0;
+  String? _lastUid;
+
   int get currentIndex => _currentIndex;
+
+  void handleUserChange(String? uid) {
+    if (_lastUid != uid) {
+      _lastUid = uid;
+      _currentIndex = 0;
+      notifyListeners();
+    }
+  }
 
   void updateIndex(int index) {
     _currentIndex = index;
+    notifyListeners();
+  }
+
+  void reset() {
+    _currentIndex = 0;
     notifyListeners();
   }
 }

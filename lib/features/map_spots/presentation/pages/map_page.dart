@@ -57,7 +57,7 @@ class _MapPageState extends State<MapPage> {
             children: [
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.example.focus_buddy',
+                userAgentPackageName: 'com.nurberdikul.nuradar',
               ),
               MarkerLayer(
                 markers: [

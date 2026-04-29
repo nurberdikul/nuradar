@@ -23,4 +23,9 @@ class AuthProvider extends ChangeNotifier {
     _subscription?.cancel();
     super.dispose();
   }
+
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
+    debugPrint('DEBUG: User signed out');
+  }
 }

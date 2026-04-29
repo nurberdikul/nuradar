@@ -3,8 +3,8 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
-import 'package:focus_buddy/features/tasks/data/models/task_model.dart';
-import 'package:focus_buddy/features/tasks/domain/entities/task_priority.dart';
+import 'package:nuradar/features/tasks/data/models/task_model.dart';
+import 'package:nuradar/features/tasks/domain/entities/task_priority.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {

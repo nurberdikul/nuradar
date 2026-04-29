@@ -1,4 +1,4 @@
-package com.example.focus_buddy
+package com.nurberdikul.nuradar
 
 import io.flutter.embedding.android.FlutterActivity
 

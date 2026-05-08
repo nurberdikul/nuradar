@@ -1,17 +1,20 @@
-# nuradar
+# nuradar 🎯
 
-A new Flutter project.
+Умный трекер задач и фокуса, разработанный на Flutter. **nuradar** помогает не просто составлять списки дел, но и приступать к ним в нужное время и в нужном месте, используя геолокацию и механизмы контроля внимания.
 
-## Getting Started
+## 🚀 Основные возможности
 
-This project is a starting point for a Flutter application.
+* **Геозоны и Радар:** Привязка задач к конкретным координатам. Приложение уведомляет о необходимости начать работу, когда вы находитесь в радиусе 100 метров от места задачи.
+* **Многопользовательский режим:** Полная изоляция данных. Задачи каждого пользователя хранятся в отдельном зашифрованном хранилище Hive на основе UID из Firebase.
+* **Switch Detector (Контроль фокуса):** Система мониторинга жизненного цикла приложения. Сессия фокуса автоматически прерывается, если пользователь сворачивает таймер или переключается на соцсети.
+* **Аналитика продуктивности:** Наглядные графики и расчет личного «Индекса фокуса» на основе истории выполненных задач.
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠 Стек технологий
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* **Frontend:** Flutter / Dart
+* **State Management:** Provider
+* **Database (Local):** Hive CE 
+* **Backend:** Firebase Auth, Cloud Firestore
+* **Maps:** `flutter_map`, `latlong2`
+* **Architecture:** Clean Architecture 
+![alt text](<Simulator Screenshot - iPhone 16e - 2026-04-29 at 13.00.04.png>) ![alt text](<Simulator Screenshot - iPhone 16e - 2026-04-29 at 13.00.33.png>) ![alt text](<Simulator Screenshot - iPhone 16e - 2026-04-29 at 13.00.43.png>) ![alt text](<Simulator Screenshot - iPhone 16e - 2026-04-29 at 13.01.03.png>) ![alt text](<Simulator Screenshot - iPhone 16e - 2026-04-30 at 23.31.22.png>) ![alt text](<Simulator Screenshot - iPhone 16e - 2026-04-30 at 23.36.31.png>)
